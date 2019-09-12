@@ -1,0 +1,45 @@
+{
+  "name": "movie-parser",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "nw-react-scripts": "2.1.1",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  },
+  "scripts": {
+    "start": "nw-react-scripts start",
+    "build": "nw-react-scripts build",
+    "test": "nw-react-scripts test",
+    "eject": "nw-react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "nw-react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "main": "index.html",
+  "nwBuilder": {
+    "//": "https://github.com/nwjs-community/nw-builder",
+    "platforms": [
+      "osx64",
+      "win32",
+      "win64"
+    ],
+    "version": "latest",
+    "flavor": "normal",
+    "buildDir": "./build",
+    "cacheDir": "./cache",
+    "macIcns": "./src/logo.icns"
+  }
+}
