@@ -5,7 +5,17 @@
   "dependencies": {
     "nw-react-scripts": "2.1.1",
     "react": "^16.9.0",
-    "react-dom": "^16.9.0"
+    "react-dom": "^16.9.0",
+    "@types/jest": "24.0.12",
+    "@types/node": "11.13.8",
+    "@types/react": "16.8.15",
+    "@types/react-dom": "16.8.4",
+    "@uifabric/fluent-theme": "^0.16.7",
+    "office-ui-fabric-react": "^6.174.0",
+    "react-router": "^5.0.1",
+    "react-router-dom": "^5.0.1",
+    "react-scripts": "3.0.0",
+    "typescript": "3.4.5"
   },
   "scripts": {
     "start": "nw-react-scripts start",
@@ -41,5 +51,9 @@
     "buildDir": "./build",
     "cacheDir": "./cache",
     "macIcns": "./src/logo.icns"
+  },
+  "devDependencies": {
+    "@types/react-router": "^5.0.3",
+    "@types/react-router-dom": "^4.3.5"
   }
 }
