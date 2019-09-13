@@ -14,7 +14,7 @@ export const Test: React.FunctionComponent = () => {
             ["tmp-001", "tmp-002", "tmp-003", "tmp-004", "tmp-005"].map((item) => {
               return (
                 <video key={item} style={videoElementStyles} controls> 
-                  <source src={`C:/Users/rick.charles/Desktop/movie-parser-cli/${item}`} type="video/mp4"/>
+                  <source src={`/public/${item}`} type="video/mp4"/>
                 </video>
               )
             })
