@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Header } from './components/pages/Header';
-import { Test } from './components/pages/Test';
+import { Videos } from './components/pages/Videos';
 import { FluentCustomizations } from '@uifabric/fluent-theme';
 import { Customizer, mergeStyles } from 'office-ui-fabric-react';
-import { HashRouter, Route, Link } from "react-router-dom";
+import { HashRouter, Route } from "react-router-dom";
 
 import * as serviceWorker from './serviceWorker';
 
@@ -24,7 +24,7 @@ ReactDOM.render(
   <Customizer {...FluentCustomizations}>
     <HashRouter>
       <Route path="/" component={Header}/>
-      <Route path="/test" component={Test}/>
+      <Route path="/videos" component={Videos}/>
     </HashRouter>   
   </Customizer>,
   document.getElementById('root')

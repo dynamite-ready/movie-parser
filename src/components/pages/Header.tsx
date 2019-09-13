@@ -23,9 +23,16 @@ export const Header: React.FunctionComponent = (props: any) => {
 
   const updateFilename = (e: any) => {
     // Good point at which to add a loader...
-
+    const tmpDirPath = `${process.cwd()}/../public/tmp/`;
+    
     // Also, clear whatever came before.
-    // fs.rmdirSync(`${process.cwd()}/../public/tmp`, {recursive: true});
+    fs.readdirSync(tmpDirPath).forEach((element: any) => {
+      if(element.slice(0,3) === "tmp") {
+        fs.unlinkSync(`${tmpDirPath}${element}`);
+      }
+    });
+
+    fs.rmdirSync(tmpDirPath);
 
     const command = childProcess.spawn(`${process.cwd()}/../public/dist/movie-parser.exe`, [$fileUpload.current.value], { shell: true });
     console.log(props, process.cwd(), command);
@@ -37,14 +44,14 @@ export const Header: React.FunctionComponent = (props: any) => {
     command.on("close", (code: any) => {
       console.log(`child process exited with code ${code}`);
       
-      fs.mkdirSync(`${process.cwd()}/../public/tmp`);
+      fs.mkdirSync(tmpDirPath);
       fs.readdirSync(process.cwd()).forEach((element: any) => {
         if(element.slice(0,3) === "tmp") {
-          fs.renameSync(`${process.cwd()}/${element}`, `${process.cwd()}/../public/tmp/${element}`);
+          fs.renameSync(`${process.cwd()}/${element}`, `${tmpDirPath}${element}`);
         }
       });
 
-      props.history.push('/test');
+      props.history.push('/videos');
       // Close the loader here...
     });
   }
