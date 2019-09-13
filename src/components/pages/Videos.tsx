@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+
+const fs = require('fs');
 
 const videoElementStyles = {
   display: "inline-block", 
@@ -6,18 +8,22 @@ const videoElementStyles = {
   margin: "0px" 
 };
 
+
 export const Videos: React.FunctionComponent = () => {
-    return (
-      <div>
-          {
-            ["tmp-001", "tmp-002", "tmp-003", "tmp-004", "tmp-005"].map((item) => {
-              return (
-                <video key={item} style={videoElementStyles} controls> 
-                  <source src={`/tmp/${item}`} type="video/mp4"/>
-                </video>
-              )
-            })
-          }
-      </div>
-    );
+  const tmpDirPath = `${process.cwd()}/../public/tmp/`;
+  const videoFiles = fs.readdirSync(tmpDirPath);
+
+  return (
+    <div>
+        {
+          videoFiles.map((item: any) => {
+            return (
+              <video key={item} style={videoElementStyles} controls> 
+                <source src={`/tmp/${item}`} type="video/mp4"/>
+              </video>
+            )
+          })
+        }
+    </div>
+  );
 };

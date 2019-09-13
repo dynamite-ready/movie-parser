@@ -13,7 +13,6 @@ export const Header: React.FunctionComponent = (props: any) => {
   
   const [filename, setFilename] = useState(null);
   const $fileUpload = useRef<HTMLInputElement>(document.createElement("input"));
-  const $linkToDisplay = useRef<HTMLInputElement>(document.createElement("input"));
 
   const openFileDialog = () => {
     if($fileUpload) {
@@ -23,6 +22,8 @@ export const Header: React.FunctionComponent = (props: any) => {
 
   const updateFilename = (e: any) => {
     // Good point at which to add a loader...
+
+    // This variable is probably the first context store property candidate.
     const tmpDirPath = `${process.cwd()}/../public/tmp/`;
     
     // Also, clear whatever came before.
