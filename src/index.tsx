@@ -7,6 +7,7 @@ import { Customizer, mergeStyles } from 'office-ui-fabric-react';
 import { HashRouter, Route } from "react-router-dom";
 
 import * as serviceWorker from './serviceWorker';
+import {RootContextProvider} from './context/root';
 
 // Inject some global styles
 mergeStyles({
@@ -21,12 +22,15 @@ mergeStyles({
 });
 
 ReactDOM.render(
-  <Customizer {...FluentCustomizations}>
-    <HashRouter>
-      <Route path="/" component={Header}/>
-      <Route path="/videos" component={Videos}/>
-    </HashRouter>   
-  </Customizer>,
+  <RootContextProvider>
+    <Customizer {...FluentCustomizations}>
+      <HashRouter>
+        <Route path="/" component={Header}/>
+        <Route path="/videos" component={Videos}/>
+      </HashRouter>   
+    </Customizer>
+  </RootContextProvider>
+  ,
   document.getElementById('root')
 );
 

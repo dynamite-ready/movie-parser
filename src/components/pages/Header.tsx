@@ -1,17 +1,18 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
 import { Link } from 'react-router-dom';
+import {RootContext} from '../../context/root';
 
 const gui = require('nw.gui');
 const fs = require('fs');
 const process = require('process');
 const childProcess = require('child_process');
+var win = gui.Window.get();
+win.showDevTools();
 
 export const Header: React.FunctionComponent = (props: any) => {
-  var win = gui.Window.get();
-  win.showDevTools();
-  
-  const [filename, setFilename] = useState(null);
+  const rootContext: any = useContext(RootContext);
+
   const $fileUpload = useRef<HTMLInputElement>(document.createElement("input"));
 
   const openFileDialog = () => {
@@ -52,6 +53,8 @@ export const Header: React.FunctionComponent = (props: any) => {
         }
       });
 
+      rootContext.setVideoFiles(fs.readdirSync(tmpDirPath));
+
       props.history.push('/videos');
       // Close the loader here...
     });
@@ -80,7 +83,13 @@ export const Header: React.FunctionComponent = (props: any) => {
     
   return (
     <div>
-        <input ref={$fileUpload} style={{display: "none"}} type="file" onChange={updateFilename}/>
+        <input 
+          ref={$fileUpload} 
+          style={{display: "none"}} 
+          type="file" 
+          onChange={updateFilename} 
+          accept="video/mp4"
+        />
         <CommandBar
           items={menuItems}
           overflowButtonProps={{ ariaLabel: 'More commands' }}

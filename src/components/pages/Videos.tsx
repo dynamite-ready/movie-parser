@@ -1,28 +1,28 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import RootContext from '../../context/root';
 
 const fs = require('fs');
 
 const videoElementStyles = {
   display: "inline-block", 
-  width: "33%", 
+  width: "33%",
   margin: "0px" 
 };
 
 
 export const Videos: React.FunctionComponent = () => {
-  const tmpDirPath = `${process.cwd()}/../public/tmp/`;
-  const videoFiles = fs.readdirSync(tmpDirPath);
+  const rootContext: any = useContext(RootContext);
 
   return (
     <div>
         {
-          videoFiles.map((item: any) => {
+          rootContext.videoFiles.length ? rootContext.videoFiles.map((item: any) => {
             return (
               <video key={item} style={videoElementStyles} controls> 
                 <source src={`/tmp/${item}`} type="video/mp4"/>
               </video>
             )
-          })
+          }): []
         }
     </div>
   );
