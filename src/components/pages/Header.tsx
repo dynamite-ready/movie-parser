@@ -23,6 +23,7 @@ export const Header: React.FunctionComponent = (props: any) => {
 
   const updateFilename = (e: any) => {
     // Good point at which to add a loader...
+    props.history.push('/');
 
     // This variable is probably the first context store property candidate.
     const tmpDirPath = `${process.cwd()}/../public/tmp/`;
