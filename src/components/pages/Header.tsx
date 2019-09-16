@@ -21,7 +21,10 @@ export const Header: React.FunctionComponent = (props: any) => {
     }
   }
 
-  const updateFilename = (e: any) => {
+  const updateFilename = () => {
+    // Only do stuff if the file has realy chnaged.
+    if(!$fileUpload.current.value) return;
+
     // Good point at which to add a loader...
     props.history.push('/');
 

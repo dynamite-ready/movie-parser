@@ -9,7 +9,6 @@ const videoElementStyles = {
   margin: "0px" 
 };
 
-
 export const Videos: React.FunctionComponent = () => {
   const rootContext: any = useContext(RootContext);
 
