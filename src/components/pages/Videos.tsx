@@ -1,25 +1,45 @@
 import React, { useContext } from 'react';
 import RootContext from '../../context/root';
 
-const fs = require('fs');
-
-const videoElementStyles = {
-  display: "inline-block", 
-  width: "33%",
-  margin: "0px" 
-};
-
 export const Videos: React.FunctionComponent = () => {
   const rootContext: any = useContext(RootContext);
+  
+  const videoElementWrapperStyle = {
+    display: "inline-block", 
+    width: "33.333%",
+    margin: "0px" 
+  };
 
+  const videoElementStyle = {
+    width: "100%", 
+  };
+
+  const textPanelStyle = {
+    width: "100%", 
+    padding: "10px 0px",
+    background: "#444444",
+    color: "white",
+    fontSize: "10px",
+    fontFamily: "arial"
+  };
+
+  const textStyle = {
+    marginLeft: "10px"
+  };
+  
   return (
     <div>
         {
-          rootContext.videoFiles.length ? rootContext.videoFiles.map((item: any) => {
+          rootContext.videoFiles.length ? rootContext.videoFiles.map((item: any, index: number) => {
             return (
-              <video key={item} style={videoElementStyles} controls> 
-                <source src={`/tmp/${item}`} type="video/mp4"/>
-              </video>
+              <div style={videoElementWrapperStyle}>
+                <video key={item} style={videoElementStyle} controls> 
+                  <source src={`/tmp/${item}`} type="video/mp4"/>
+                </video>
+                <div style={textPanelStyle}>
+                  <span style={textStyle}>from: {rootContext.sceneMetadata[index][0]}, to: {rootContext.sceneMetadata[index][1]}</span>
+                </div>     
+              </div>
             )
           }): []
         }
