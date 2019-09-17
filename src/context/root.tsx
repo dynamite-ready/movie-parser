@@ -4,9 +4,18 @@ export const RootContext: any = React.createContext({videoFiles: null, setVideoF
 
 export const RootContextProvider: React.FunctionComponent = (props) => {
     const [videoFiles, setVideoFiles] = useState(true);
+    const [loading, setLoading] = useState(false);
     return (
         <RootContext.Provider value={
-            {videoFiles, setVideoFiles}
+            {
+                // Get and set videoFiles...
+                videoFiles, 
+                setVideoFiles,
+
+                // Get and set loading status...
+                loading, 
+                setLoading
+            }
         }>
             {props.children}
         </RootContext.Provider>

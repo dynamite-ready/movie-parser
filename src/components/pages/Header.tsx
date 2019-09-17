@@ -1,7 +1,7 @@
 import React, { useState, useRef, useContext } from 'react';
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
-import { Link } from 'react-router-dom';
 import {RootContext} from '../../context/root';
+import { Spinner, SpinnerSize } from 'office-ui-fabric-react';
 
 const gui = require('nw.gui');
 const fs = require('fs');
@@ -9,6 +9,16 @@ const process = require('process');
 const childProcess = require('child_process');
 var win = gui.Window.get();
 win.showDevTools();
+
+// Why won't this work as a variable in typescript?
+// const loadingOverlayStyle = {
+//   position: "fixed",
+//   width: "100%",
+//   height: "100%",
+//   background: "white",
+//   zIndex: 1,
+//   opacity: 0.6 
+// };
 
 export const Header: React.FunctionComponent = (props: any) => {
   const rootContext: any = useContext(RootContext);
@@ -26,6 +36,7 @@ export const Header: React.FunctionComponent = (props: any) => {
     if(!$fileUpload.current.value) return;
 
     // Good point at which to add a loader...
+    rootContext.setLoading(true);
     props.history.push('/');
 
     // This variable is probably the first context store property candidate.
@@ -41,15 +52,14 @@ export const Header: React.FunctionComponent = (props: any) => {
     fs.rmdirSync(tmpDirPath);
 
     const command = childProcess.spawn(`${process.cwd()}/../public/dist/movie-parser.exe`, [$fileUpload.current.value], { shell: true });
-    console.log(props, process.cwd(), command);
 
-    command.stdout.on('data', (data: any) => {
-      console.log(`stdout: ${data}`);
+    command.on("data", (data: any) => {
+      console.log("SUSPECT: ", data, $fileUpload.current.value);
     });
-    
+
     command.on("close", (code: any) => {
-      console.log(`child process exited with code ${code}`);
-      
+      console.log(code, $fileUpload.current.value)
+
       fs.mkdirSync(tmpDirPath);
       fs.readdirSync(process.cwd()).forEach((element: any) => {
         if(element.slice(0,3) === "tmp") {
@@ -60,7 +70,7 @@ export const Header: React.FunctionComponent = (props: any) => {
       rootContext.setVideoFiles(fs.readdirSync(tmpDirPath));
 
       props.history.push('/videos');
-      // Close the loader here...
+      rootContext.setLoading(false);
     });
   }
 
@@ -86,7 +96,22 @@ export const Header: React.FunctionComponent = (props: any) => {
   ];
     
   return (
-    <div>
+    <div style={{height: "100%"}}>
+        { rootContext.loading &&
+          <div style={{
+            position: "fixed",
+            width: "100%",
+            height: "100%",
+            background: "white",
+            zIndex: 1,
+            opacity: 0.6 
+          }}>
+            <Spinner
+              style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}
+              size={SpinnerSize.large} 
+            />
+          </div>
+        }
         <input 
           ref={$fileUpload} 
           style={{display: "none"}} 
@@ -95,6 +120,7 @@ export const Header: React.FunctionComponent = (props: any) => {
           accept="video/mp4"
         />
         <CommandBar
+          style={{position: "fixed"}}
           items={menuItems}
           overflowButtonProps={{ ariaLabel: 'More commands' }}
           ariaLabel={'Use left and right arrow keys to navigate between commands'}
