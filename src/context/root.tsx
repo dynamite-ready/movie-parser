@@ -3,8 +3,9 @@ import React, { useState } from "react";
 export const RootContext: any = React.createContext({videoFiles: null, setVideoFiles: null});
 
 export const RootContextProvider: React.FunctionComponent = (props) => {
-    const [videoFiles, setVideoFiles] = useState(true);
+    const [videoFiles, setVideoFiles] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [sceneMetadata, setSceneMetadata] = useState(null);
     return (
         <RootContext.Provider value={
             {
@@ -14,7 +15,11 @@ export const RootContextProvider: React.FunctionComponent = (props) => {
 
                 // Get and set loading status...
                 loading, 
-                setLoading
+                setLoading,
+                
+                // Get and set sceneMetadata...
+                sceneMetadata, 
+                setSceneMetadata                
             }
         }>
             {props.children}

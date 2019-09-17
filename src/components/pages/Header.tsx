@@ -1,14 +1,16 @@
 import React, { useState, useRef, useContext } from 'react';
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
 import {RootContext} from '../../context/root';
-import { Spinner, SpinnerSize } from 'office-ui-fabric-react';
+import { Spinner, SpinnerSize, Overlay } from 'office-ui-fabric-react';
 
 const gui = require('nw.gui');
 const fs = require('fs');
 const process = require('process');
 const childProcess = require('child_process');
-var win = gui.Window.get();
+const win = gui.Window.get();
 win.showDevTools();
+
+// This is probably a good time to set the tmp folder...
 
 // Why won't this work as a variable in typescript?
 // const loadingOverlayStyle = {
@@ -37,6 +39,7 @@ export const Header: React.FunctionComponent = (props: any) => {
 
     // Good point at which to add a loader...
     rootContext.setLoading(true);
+    rootContext.setSceneMetadata(null);
     props.history.push('/');
 
     // This variable is probably the first context store property candidate.
@@ -53,17 +56,24 @@ export const Header: React.FunctionComponent = (props: any) => {
 
     const command = childProcess.spawn(`${process.cwd()}/../public/dist/movie-parser.exe`, [$fileUpload.current.value], { shell: true });
 
-    command.on("data", (data: any) => {
-      console.log("SUSPECT: ", data, $fileUpload.current.value);
+    command.stdout.on("data", (data: any) => {
+      console.log(data);
+      try {
+        const outputString = data.toString();
+        const metadata = JSON.parse(outputString);
+        console.log(metadata);
+        rootContext.setSceneMetadata(metadata);
+      } catch (error) {
+        // We're merely swallowing these errors for now.
+        console.log(error)
+      }
     });
 
     command.on("close", (code: any) => {
-      console.log(code, $fileUpload.current.value)
-
       fs.mkdirSync(tmpDirPath);
       fs.readdirSync(process.cwd()).forEach((element: any) => {
         if(element.slice(0,3) === "tmp") {
-          fs.renameSync(`${process.cwd()}/${element}`, `${tmpDirPath}${element}`);
+          fs.renameSync(`${process.cwd()}/${element}`, `${tmpDirPath}${element}-${new Date().getTime()}`);
         }
       });
 
@@ -103,19 +113,17 @@ export const Header: React.FunctionComponent = (props: any) => {
         height: "100%"
       }}>
         { rootContext.loading &&
-          <div style={{
+          <Overlay style={{
             position: "absolute",
             width: "100%",
             height: "100%",
-            background: "white",
-            zIndex: 1,
-            opacity: 0.6 
+            zIndex: 1
           }}>
             <Spinner
               style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}
               size={SpinnerSize.large} 
             />
-          </div>
+          </Overlay>
         }
         <input 
           ref={$fileUpload} 
