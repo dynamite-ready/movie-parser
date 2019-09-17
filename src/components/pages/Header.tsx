@@ -96,10 +96,15 @@ export const Header: React.FunctionComponent = (props: any) => {
   ];
     
   return (
-    <div style={{height: "100%"}}>
+    <div>
+      <div style={{
+        position: "absolute", 
+        width: "100%", 
+        height: "100%"
+      }}>
         { rootContext.loading &&
           <div style={{
-            position: "fixed",
+            position: "absolute",
             width: "100%",
             height: "100%",
             background: "white",
@@ -119,12 +124,12 @@ export const Header: React.FunctionComponent = (props: any) => {
           onChange={updateFilename} 
           accept="video/mp4"
         />
-        <CommandBar
-          style={{position: "fixed"}}
-          items={menuItems}
-          overflowButtonProps={{ ariaLabel: 'More commands' }}
-          ariaLabel={'Use left and right arrow keys to navigate between commands'}
-        />
+      </div>
+      <CommandBar
+        items={menuItems}
+        overflowButtonProps={{ ariaLabel: 'More commands' }}
+        ariaLabel={'Use left and right arrow keys to navigate between commands'}
+      />
     </div>
   );
 };
