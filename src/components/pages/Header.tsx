@@ -10,7 +10,7 @@ const childProcess = require('child_process');
 const win = gui.Window.get();
 win.showDevTools();
 
-// This is probably a good time to set the tmp folder...
+
 
 // Why won't this work as a variable in typescript?
 // const loadingOverlayStyle = {
@@ -23,9 +23,13 @@ win.showDevTools();
 // };
 
 export const Header: React.FunctionComponent = (props: any) => {
+  // This variable is probably the first context store property candidate.
+  const tmpDirPath = `${process.cwd()}/../public/tmp/`;
   const rootContext: any = useContext(RootContext);
-
   const $fileUpload = useRef<HTMLInputElement>(document.createElement("input"));
+
+  if(!fs.existsSync(tmpDirPath)) 
+    fs.mkdirSync(tmpDirPath);
 
   const openFileDialog = () => {
     if($fileUpload) {
@@ -42,8 +46,6 @@ export const Header: React.FunctionComponent = (props: any) => {
     rootContext.setSceneMetadata(null);
     props.history.push('/');
 
-    // This variable is probably the first context store property candidate.
-    const tmpDirPath = `${process.cwd()}/../public/tmp/`;
     
     // Also, clear whatever came before.
     fs.readdirSync(tmpDirPath).forEach((element: any) => {
@@ -70,7 +72,9 @@ export const Header: React.FunctionComponent = (props: any) => {
     });
 
     command.on("close", (code: any) => {
-      fs.mkdirSync(tmpDirPath);
+      if(!fs.existsSync(tmpDirPath)) 
+        fs.mkdirSync(tmpDirPath);
+      
       fs.readdirSync(process.cwd()).forEach((element: any) => {
         if(element.slice(0,3) === "tmp") {
           fs.renameSync(`${process.cwd()}/${element}`, `${tmpDirPath}${element}-${new Date().getTime()}`);
