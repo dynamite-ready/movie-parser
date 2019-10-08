@@ -10,8 +10,6 @@ const childProcess = require('child_process');
 const win = gui.Window.get();
 win.showDevTools();
 
-
-
 // Why won't this work as a variable in typescript?
 // const loadingOverlayStyle = {
 //   position: "fixed",
@@ -56,7 +54,7 @@ export const Header: React.FunctionComponent = (props: any) => {
 
     fs.rmdirSync(tmpDirPath);
 
-    const command = childProcess.spawn(`${process.cwd()}/../public/dist/movie-parser.exe`, [$fileUpload.current.value], { shell: true });
+    const command = childProcess.spawn(`${process.cwd()}/../public/dist/process-video.exe`, [$fileUpload.current.value], { shell: true });
 
     command.stdout.on("data", (data: any) => {
       console.log(data);
