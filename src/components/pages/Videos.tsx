@@ -3,6 +3,7 @@ import RootContext from '../../context/root';
 import { mkdirSync } from 'fs';
 
 const fs = require('fs');
+const childProcess = require('child_process');
 
 export const Videos: React.FunctionComponent = () => {
   const rootContext: any = useContext(RootContext);
@@ -36,8 +37,12 @@ export const Videos: React.FunctionComponent = () => {
   rootContext.videoFiles.forEach((item: any) => {
     const tmpImageDirPath = `${tmpDirPath}${item}-images`;
     
-    if(!fs.existsSync(tmpImageDirPath))
-      fs.mkdirSync(tmpImageDirPath);
+    if(!fs.existsSync(tmpImageDirPath)) {
+      // fs.mkdirSync(tmpImageDirPath);
+      childProcess.exec(`${process.cwd()}/../public/dist/process-video.exe --images file ${tmpDirPath}${item} --ifolder ${tmpImageDirPath}/`, (data: any) => {
+        console.log(data, " WHAT THE ABSOLUTE?");
+      });
+    }
   });
 
   // First I neeed to create an image folder for each of the videos
