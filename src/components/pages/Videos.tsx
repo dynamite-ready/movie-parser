@@ -1,5 +1,8 @@
 import React, { useContext } from 'react';
 import RootContext from '../../context/root';
+import { mkdirSync } from 'fs';
+
+const fs = require('fs');
 
 export const Videos: React.FunctionComponent = () => {
   const rootContext: any = useContext(RootContext);
@@ -28,6 +31,14 @@ export const Videos: React.FunctionComponent = () => {
   };
 
   console.log(rootContext.videoFiles);
+  const tmpDirPath = `${process.cwd()}/../public/tmp/`;
+  
+  rootContext.videoFiles.forEach((item: any) => {
+    const tmpImageDirPath = `${tmpDirPath}${item}-images`;
+    
+    if(!fs.existsSync(tmpImageDirPath))
+      fs.mkdirSync(tmpImageDirPath);
+  });
 
   // First I neeed to create an image folder for each of the videos
   

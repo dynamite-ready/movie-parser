@@ -4,6 +4,7 @@ import {RootContext} from '../../context/root';
 import { Spinner, SpinnerSize, Overlay } from 'office-ui-fabric-react';
 
 const gui = require('nw.gui');
+const rimraf = require('rimraf');
 const fs = require('fs');
 const process = require('process');
 const childProcess = require('child_process');
@@ -46,13 +47,13 @@ export const Header: React.FunctionComponent = (props: any) => {
 
     
     // Also, clear whatever came before.
-    fs.readdirSync(tmpDirPath).forEach((element: any) => {
-      if(element.slice(0,3) === "tmp") {
-        fs.unlinkSync(`${tmpDirPath}${element}`);
-      }
-    });
+    // fs.readdirSync(tmpDirPath).forEach((element: any) => {
+    //   if(element.slice(0, 3) === "tmp") {
+    //     fs.unlinkSync(`${tmpDirPath}${element}`);
+    //   }
+    // });
 
-    fs.rmdirSync(tmpDirPath);
+    rimraf.sync(tmpDirPath);
 
     const command = childProcess.spawn(`${process.cwd()}/../public/dist/process-video.exe`, [$fileUpload.current.value], { shell: true });
 
