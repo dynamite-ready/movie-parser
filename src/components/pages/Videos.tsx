@@ -26,6 +26,10 @@ export const Videos: React.FunctionComponent = () => {
   const textStyle = {
     marginLeft: "10px"
   };
+
+  console.log(rootContext.videoFiles);
+
+  // First I neeed to create an image folder for each of the videos
   
   return (
     <div>

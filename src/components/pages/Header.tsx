@@ -70,7 +70,8 @@ export const Header: React.FunctionComponent = (props: any) => {
     });
 
     command.on("close", (code: any) => {
-      if(!fs.existsSync(tmpDirPath)) 
+      // Move all the files.
+      if(!fs.existsSync(tmpDirPath))
         fs.mkdirSync(tmpDirPath);
       
       fs.readdirSync(process.cwd()).forEach((element: any) => {
