@@ -26,8 +26,9 @@ export const Header: React.FunctionComponent = (props: any) => {
   const tmpDirPath = `${process.cwd()}/../public/tmp/`;
   const rootContext: any = useContext(RootContext);
   const $fileUpload = useRef<HTMLInputElement>(document.createElement("input"));
-
+  
   if(!fs.existsSync(tmpDirPath)) 
+    // rimraf.sync(tmpDirPath);
     fs.mkdirSync(tmpDirPath);
 
   const openFileDialog = () => {

@@ -40,7 +40,9 @@ export const Videos: React.FunctionComponent = () => {
     if(!fs.existsSync(tmpImageDirPath)) {
       // fs.mkdirSync(tmpImageDirPath);
       childProcess.exec(`${process.cwd()}/../public/dist/process-video.exe --images file ${tmpDirPath}${item} --ifolder ${tmpImageDirPath}/`, (data: any) => {
-        console.log(data, " WHAT THE ABSOLUTE?");
+        fs.readdir(`${tmpImageDirPath}/`, (_err: any, files: any) => {
+          console.log(`Folder contents ${tmpImageDirPath}: `, files);
+        });
       });
     }
   });
