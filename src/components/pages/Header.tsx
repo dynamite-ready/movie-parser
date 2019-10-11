@@ -38,7 +38,8 @@ export const Header: React.FunctionComponent = (props: any) => {
   }
 
   const updateFilename = () => {
-    // Only do stuff if the file has realy chnaged.
+    rootContext.setIsProcessed(false);
+    // Only do stuff if the file has realy changed.
     if(!$fileUpload.current.value) return;
 
     // Good point at which to add a loader...
@@ -46,7 +47,6 @@ export const Header: React.FunctionComponent = (props: any) => {
     rootContext.setSceneMetadata(null);
     props.history.push('/');
 
-    
     // Also, clear whatever came before.
     // fs.readdirSync(tmpDirPath).forEach((element: any) => {
     //   if(element.slice(0, 3) === "tmp") {

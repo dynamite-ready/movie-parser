@@ -31,30 +31,48 @@ export const Videos: React.FunctionComponent = () => {
     marginLeft: "10px"
   };
 
-  console.log(rootContext.videoFiles);
-  const tmpDirPath = `${process.cwd()}/../public/tmp/`;
-  
-  rootContext.videoFiles.forEach((item: any) => {
-    const tmpImageDirPath = `${tmpDirPath}${item}-images`;
+  if(!rootContext.isProcessed) {
+    rootContext.setIsProcessed(true);
+    console.log(rootContext.videoFiles);
+    const tmpDirPath = `${process.cwd()}/../public/tmp/`;
     
-    if(!fs.existsSync(tmpImageDirPath)) {
-      // fs.mkdirSync(tmpImageDirPath);
-      childProcess.exec(`${process.cwd()}/../public/dist/process-video.exe --images file ${tmpDirPath}${item} --ifolder ${tmpImageDirPath}/`, (data: any) => {
-        fs.readdir(`${tmpImageDirPath}/`, (_err: any, files: any) => {
-          console.log(`Folder contents ${tmpImageDirPath}: `, files);
-        });
-      });
-    }
-  });
+    // rootContext.videoFiles.forEach((item: any) => {
+      const tmpImageDirPath = `${tmpDirPath}${rootContext.videoFiles[0]}-images/`;
+  
+      console.log("HEEEEEEY!!?");
+      
+      if(!fs.existsSync(tmpImageDirPath)) {
+        childProcess.exec(`${process.cwd()}/../public/dist/process-video.exe --images file ${tmpDirPath}${rootContext.videoFiles[0]} --ifolder ${tmpImageDirPath}`, (err: any, filelist: any) => {
+          const fileList = JSON.parse(filelist);
 
-  // First I neeed to create an image folder for each of the videos
+          function checkAllFilesExist(files: any) {
+            console.log("IS THIS WORKING?: ", files)
+            files.forEach((item: any) => {
+              console.log("IS THIS WORKING?: ", fs.existsSync(item))
+              if(!fs.existsSync(item)) {
+                checkAllFilesExist(files);
+              }
+            });
+          };
+
+          checkAllFilesExist(fileList);
+
+          console.log("I SCRATCH MY CHIN...");
+
+          childProcess.exec(`${process.cwd()}/../public/dist/evaluate-images.exe folder ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
+            console.log(err, imageResponse);
+          });          
+        });
+      }
+  }
+  // });
   
   return (
     <div>
         {
           rootContext.videoFiles.length ? rootContext.videoFiles.map((item: any, index: number) => {
             return (
-              <div style={videoElementWrapperStyle}>
+              <div key={index} style={videoElementWrapperStyle}>
                 <video key={item} style={videoElementStyle} controls> 
                   <source src={`/tmp/${item}`} type="video/mp4"/>
                 </video>

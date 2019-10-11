@@ -6,9 +6,14 @@ export const RootContextProvider: React.FunctionComponent = (props) => {
     const [videoFiles, setVideoFiles] = useState([]);
     const [loading, setLoading] = useState(false);
     const [sceneMetadata, setSceneMetadata] = useState(null);
+    const [isProcessed, setIsProcessed] = useState(false);
+    
     return (
         <RootContext.Provider value={
             {
+                isProcessed,
+                setIsProcessed,
+
                 // Get and set videoFiles...
                 videoFiles, 
                 setVideoFiles,
