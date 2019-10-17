@@ -1,7 +1,5 @@
 import React, { useContext } from 'react';
 import RootContext from '../../context/root';
-import { mkdirSync } from 'fs';
-
 const fs = require('fs');
 const childProcess = require('child_process');
 
@@ -36,19 +34,15 @@ export const Videos: React.FunctionComponent = () => {
     console.log(rootContext.videoFiles);
     const tmpDirPath = `${process.cwd()}/../public/tmp/`;
     
-    // rootContext.videoFiles.forEach((item: any) => {
-      const tmpImageDirPath = `${tmpDirPath}${rootContext.videoFiles[0]}-images/`;
-  
-      console.log("HEEEEEEY!!?");
+    const evaluateScene = (sceneIndex: any) => {
+      const tmpImageDirPath = `${tmpDirPath}${rootContext.videoFiles[sceneIndex]}-images/`;
       
       if(!fs.existsSync(tmpImageDirPath)) {
-        childProcess.exec(`${process.cwd()}/../public/dist/process-video.exe --images file ${tmpDirPath}${rootContext.videoFiles[0]} --ifolder ${tmpImageDirPath}`, (err: any, filelist: any) => {
+        childProcess.exec(`${process.cwd()}/../public/dist/process-video.exe --images file ${tmpDirPath}${rootContext.videoFiles[sceneIndex]} --ifolder ${tmpImageDirPath}`, (err: any, filelist: any) => {
           const fileList = JSON.parse(filelist);
 
           function checkAllFilesExist(files: any) {
-            console.log("IS THIS WORKING?: ", files)
             files.forEach((item: any) => {
-              console.log("IS THIS WORKING?: ", fs.existsSync(item))
               if(!fs.existsSync(item)) {
                 checkAllFilesExist(files);
               }
@@ -57,15 +51,28 @@ export const Videos: React.FunctionComponent = () => {
 
           checkAllFilesExist(fileList);
 
-          console.log("I SCRATCH MY CHIN...");
+          childProcess.exec(`${process.cwd()}/../public/dist/evaluate-images.exe ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
+            const spliced = [
+              ...rootContext.sceneMetadata.slice(0, sceneIndex),
+              [...rootContext.sceneMetadata[sceneIndex], JSON.stringify(imageResponse)],
+              ...rootContext.sceneMetadata.slice(sceneIndex)
+            ];
 
-          childProcess.exec(`${process.cwd()}/../public/dist/evaluate-images.exe folder ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
+            console.log(spliced, rootContext.sceneMetadata);
+
+            rootContext.setSceneMetadata(spliced);
+
             console.log(err, imageResponse);
+
+            if(sceneIndex < rootContext.videoFiles.length)
+              evaluateScene(sceneIndex + 1);
           });          
         });
       }
+    }
+
+    evaluateScene(0);
   }
-  // });
   
   return (
     <div>
@@ -77,7 +84,10 @@ export const Videos: React.FunctionComponent = () => {
                   <source src={`/tmp/${item}`} type="video/mp4"/>
                 </video>
                 <div style={textPanelStyle}>
-                  <span style={textStyle}>from: {rootContext.sceneMetadata[index][0]}, to: {rootContext.sceneMetadata[index][1]}</span>
+
+                  {/* { rootContext.sceneMetadata && rootContext.sceneMetadata[index] && rootContext.sceneMetadata[index][2] ? rootContext.sceneMetadata[index][2] : null } */}
+                  {/* <span style={textStyle}>from: {rootContext.sceneMetadata && rootContext.sceneMetadata[index] ? rootContext.sceneMetadata[index][0] : null}, to: {rootContext.sceneMetadata && rootContext.sceneMetadata[index] ? rootContext.sceneMetadata[index][1] : null}</span> */}
+                  {JSON.stringify(rootContext.sceneMetadata && JSON.stringify(rootContext.sceneMetadata[index]))}
                 </div>     
               </div>
             )
