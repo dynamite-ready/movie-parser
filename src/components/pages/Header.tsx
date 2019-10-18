@@ -1,15 +1,12 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useRef, useContext } from 'react';
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
 import {RootContext} from '../../context/root';
 import { Spinner, SpinnerSize, Overlay } from 'office-ui-fabric-react';
 
-const gui = require('nw.gui');
 const rimraf = require('rimraf');
 const fs = require('fs');
 const process = require('process');
 const childProcess = require('child_process');
-const win = gui.Window.get();
-win.showDevTools();
 
 // Why won't this work as a variable in typescript?
 // const loadingOverlayStyle = {

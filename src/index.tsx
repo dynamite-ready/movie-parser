@@ -9,6 +9,12 @@ import { HashRouter, Route } from "react-router-dom";
 import * as serviceWorker from './serviceWorker';
 import {RootContextProvider} from './context/root';
 
+const gui = require('nw.gui');
+const win = gui.Window.get();
+win.showDevTools();
+win.setMinimumSize(800, 450);
+
+
 // Inject some global styles
 mergeStyles({
   selectors: {

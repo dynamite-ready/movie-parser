@@ -1,7 +1,9 @@
 import React, { useContext } from 'react';
 import RootContext from '../../context/root';
+
 const fs = require('fs');
 const childProcess = require('child_process');
+const rimraf = require('rimraf');
 
 export const Videos: React.FunctionComponent = () => {
   const rootContext: any = useContext(RootContext);
@@ -34,7 +36,7 @@ export const Videos: React.FunctionComponent = () => {
     console.log(rootContext.videoFiles);
     const tmpDirPath = `${process.cwd()}/../public/tmp/`;
     
-    const evaluateScene = (sceneIndex: any) => {
+    const evaluateScene = (sceneIndex: any, updatedMeta: any) => {
       const tmpImageDirPath = `${tmpDirPath}${rootContext.videoFiles[sceneIndex]}-images/`;
       
       if(!fs.existsSync(tmpImageDirPath)) {
@@ -52,10 +54,13 @@ export const Videos: React.FunctionComponent = () => {
           checkAllFilesExist(fileList);
 
           childProcess.exec(`${process.cwd()}/../public/dist/evaluate-images.exe ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
+            rimraf.sync(tmpImageDirPath);
+            
+            const metadata = updatedMeta ? updatedMeta : rootContext.sceneMetadata;
             const spliced = [
-              ...rootContext.sceneMetadata.slice(0, sceneIndex),
-              [...rootContext.sceneMetadata[sceneIndex], JSON.stringify(imageResponse)],
-              ...rootContext.sceneMetadata.slice(sceneIndex)
+              ...metadata.slice(0, sceneIndex),
+              [...metadata[sceneIndex], JSON.stringify(imageResponse)],
+              ...metadata.slice(sceneIndex)
             ];
 
             console.log(spliced, rootContext.sceneMetadata);
@@ -65,13 +70,13 @@ export const Videos: React.FunctionComponent = () => {
             console.log(err, imageResponse);
 
             if(sceneIndex < rootContext.videoFiles.length)
-              evaluateScene(sceneIndex + 1);
+              evaluateScene(sceneIndex + 1, spliced);
           });          
         });
       }
     }
 
-    evaluateScene(0);
+    evaluateScene(0, null);
   }
   
   return (
