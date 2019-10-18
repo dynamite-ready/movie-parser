@@ -53,13 +53,13 @@ export const Videos: React.FunctionComponent = () => {
 
           checkAllFilesExist(fileList);
 
-          childProcess.exec(`${process.cwd()}/../public/dist/evaluate-images.exe ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
+          childProcess.exec(`${process.cwd()}/../public/dist/evaluate-images/evaluate-images.exe ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
             rimraf.sync(tmpImageDirPath);
             
             const metadata = updatedMeta ? updatedMeta : rootContext.sceneMetadata;
             const spliced = [
               ...metadata.slice(0, sceneIndex),
-              [...metadata[sceneIndex], JSON.stringify(imageResponse)],
+              [...metadata[sceneIndex], JSON.parse(imageResponse)],
               ...metadata.slice(sceneIndex)
             ];
 
@@ -88,11 +88,15 @@ export const Videos: React.FunctionComponent = () => {
                 <video key={item} style={videoElementStyle} controls> 
                   <source src={`/tmp/${item}`} type="video/mp4"/>
                 </video>
-                <div style={textPanelStyle}>
-
-                  {/* { rootContext.sceneMetadata && rootContext.sceneMetadata[index] && rootContext.sceneMetadata[index][2] ? rootContext.sceneMetadata[index][2] : null } */}
-                  {/* <span style={textStyle}>from: {rootContext.sceneMetadata && rootContext.sceneMetadata[index] ? rootContext.sceneMetadata[index][0] : null}, to: {rootContext.sceneMetadata && rootContext.sceneMetadata[index] ? rootContext.sceneMetadata[index][1] : null}</span> */}
-                  {JSON.stringify(rootContext.sceneMetadata && JSON.stringify(rootContext.sceneMetadata[index]))}
+                <div style={{ 
+                  ...textPanelStyle, 
+                  background: 
+                    rootContext.sceneMetadata[index][2] === null || 
+                    rootContext.sceneMetadata[index][2] === undefined ? "#444444" : 
+                    rootContext.sceneMetadata[index][2] !== undefined && rootContext.sceneMetadata[index][2] == true ? 
+                    "#FF0000" : "#007100" 
+                }}>
+                  <span style={textStyle}>from: {rootContext.sceneMetadata[index][0]}, to: {rootContext.sceneMetadata[index][1]}</span>
                 </div>     
               </div>
             )
