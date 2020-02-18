@@ -56,15 +56,12 @@ export const Header: React.FunctionComponent = (props: any) => {
     const command = childProcess.spawn(`${process.cwd()}/../public/dist/process-video.exe`, [$fileUpload.current.value], { shell: true });
 
     command.stdout.on("data", (data: any) => {
-      console.log(data);
       try {
         const outputString = data.toString();
         const metadata = JSON.parse(outputString);
-        console.log(metadata);
         rootContext.setSceneMetadata(metadata);
       } catch (error) {
         // We're merely swallowing these errors for now.
-        console.log(error)
       }
     });
 

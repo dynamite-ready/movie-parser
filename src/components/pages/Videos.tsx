@@ -33,7 +33,7 @@ export const Videos: React.FunctionComponent = () => {
 
   if(!rootContext.isProcessed) {
     rootContext.setIsProcessed(true);
-    console.log(rootContext.videoFiles);
+
     const tmpDirPath = `${process.cwd()}/../public/tmp/`;
     
     const evaluateScene = (sceneIndex: any, updatedMeta: any) => {
@@ -55,19 +55,17 @@ export const Videos: React.FunctionComponent = () => {
 
           childProcess.exec(`${process.cwd()}/../public/dist/evaluate-images/evaluate-images.exe ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
             rimraf.sync(tmpImageDirPath);
+
+            console.log("Soooooo.... ", imageResponse, err);
             
             const metadata = updatedMeta ? updatedMeta : rootContext.sceneMetadata;
             const spliced = [
               ...metadata.slice(0, sceneIndex),
-              [...metadata[sceneIndex], JSON.parse(imageResponse)],
+              [...metadata[sceneIndex], Boolean(JSON.parse(imageResponse) > -0.5)],
               ...metadata.slice(sceneIndex)
             ];
 
-            console.log(spliced, rootContext.sceneMetadata);
-
             rootContext.setSceneMetadata(spliced);
-
-            console.log(err, imageResponse);
 
             if(sceneIndex < rootContext.videoFiles.length)
               evaluateScene(sceneIndex + 1, spliced);
@@ -93,7 +91,7 @@ export const Videos: React.FunctionComponent = () => {
                   background: 
                     rootContext.sceneMetadata[index][2] === null || 
                     rootContext.sceneMetadata[index][2] === undefined ? "#444444" : 
-                    rootContext.sceneMetadata[index][2] !== undefined && rootContext.sceneMetadata[index][2] == true ? 
+                    rootContext.sceneMetadata[index][2] !== undefined && rootContext.sceneMetadata[index][2] === true ? 
                     "#FF0000" : "#007100" 
                 }}>
                   <span style={textStyle}>from: {rootContext.sceneMetadata[index][0]}, to: {rootContext.sceneMetadata[index][1]}</span>
