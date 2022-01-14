@@ -1,6 +1,6 @@
 # Movie Parser
 
-A quick prototype for a desktop application which to open a movie file, and flag the frames which an ML model determines to be NSFW.
+A quick prototype for a desktop application which can be used to open a movie file, and flag the frames which an ML model determines to be NSFW.
 Still needs a lot of cleaning up...
 
 ## Available Scripts
