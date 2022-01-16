@@ -19,8 +19,9 @@ const childProcess = require('child_process');
 // };
 
 export const Header: React.FunctionComponent = (props: any) => {
+  const rootPath = process.cwd().replace("build", "");
   // This variable is probably the first context store property candidate.
-  const tmpDirPath = `${process.cwd()}/../public/tmp/`;
+  const tmpDirPath = `${rootPath}public/tmp/`;
   const rootContext: any = useContext(RootContext);
   const $fileUpload = useRef<HTMLInputElement>(document.createElement("input"));
   
@@ -53,7 +54,7 @@ export const Header: React.FunctionComponent = (props: any) => {
 
     rimraf.sync(tmpDirPath);
 
-    const command = childProcess.spawn(`${process.cwd()}/../public/dist/process-video.exe`, [$fileUpload.current.value], { shell: true });
+    const command = childProcess.spawn(`"${rootPath}public/dist/process-video.exe"`, [`"${$fileUpload.current.value}"`], { shell: true });
 
     command.stdout.on("data", (data: any) => {
       try {
@@ -62,24 +63,31 @@ export const Header: React.FunctionComponent = (props: any) => {
         rootContext.setSceneMetadata(metadata);
       } catch (error) {
         // We're merely swallowing these errors for now.
+        console.log("On Data Error: ", error);
       }
     });
 
     command.on("close", (code: any) => {
-      // Move all the files.
-      if(!fs.existsSync(tmpDirPath))
-        fs.mkdirSync(tmpDirPath);
-      
-      fs.readdirSync(process.cwd()).forEach((element: any) => {
-        if(element.slice(0,3) === "tmp") {
-          fs.renameSync(`${process.cwd()}/${element}`, `${tmpDirPath}${element}-${new Date().getTime()}`);
-        }
-      });
-
-      rootContext.setVideoFiles(fs.readdirSync(tmpDirPath));
-
-      props.history.push('/videos');
-      rootContext.setLoading(false);
+      try {
+        // Move all the files.
+        if(!fs.existsSync(tmpDirPath))
+          fs.mkdirSync(tmpDirPath);
+        
+        const tmpDir = fs.readdirSync(`${rootPath}build/`);
+  
+        tmpDir.forEach((element: any) => {
+          if(element.slice(0,3) === "tmp") {
+            fs.renameSync(`${rootPath}build/${element}`, `${tmpDirPath}${element}-${new Date().getTime()}`);
+          }
+        });
+  
+        rootContext.setVideoFiles(fs.readdirSync(tmpDirPath));
+  
+        props.history.push('/videos');
+        rootContext.setLoading(false);
+      } catch(error)  {
+        console.log("On Close Error: ", error);
+      }
     });
   }
 

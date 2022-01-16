@@ -32,15 +32,16 @@ export const Videos: React.FunctionComponent = () => {
   };
 
   if(!rootContext.isProcessed) {
+    const rootPath = process.cwd().replace("build", "");
     rootContext.setIsProcessed(true);
 
-    const tmpDirPath = `${process.cwd()}/../public/tmp/`;
+    const tmpDirPath = `${rootPath}public/tmp/`;
     
     const evaluateScene = (sceneIndex: any, updatedMeta: any) => {
       const tmpImageDirPath = `${tmpDirPath}${rootContext.videoFiles[sceneIndex]}-images/`;
       
       if(!fs.existsSync(tmpImageDirPath)) {
-        childProcess.exec(`${process.cwd()}/../public/dist/process-video.exe --images file ${tmpDirPath}${rootContext.videoFiles[sceneIndex]} --ifolder ${tmpImageDirPath}`, (err: any, filelist: any) => {
+        childProcess.exec(`${rootPath}public/dist/process-video.exe --images file ${tmpDirPath}${rootContext.videoFiles[sceneIndex]} --ifolder ${tmpImageDirPath}`, (err: any, filelist: any) => {
           const fileList = JSON.parse(filelist);
 
           function checkAllFilesExist(files: any) {
@@ -53,7 +54,7 @@ export const Videos: React.FunctionComponent = () => {
 
           checkAllFilesExist(fileList);
 
-          childProcess.exec(`${process.cwd()}/../public/dist/evaluate-images/evaluate-images.exe ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
+          childProcess.exec(`${rootPath}public/dist/evaluate-images/evaluate-images.exe ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
             rimraf.sync(tmpImageDirPath);
 
             console.log("Soooooo.... ", imageResponse, err);

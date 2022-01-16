@@ -17,6 +17,8 @@
 # tmp file folder
 /public/tmp
 
+/public/dist
+
 # misc
 .DS_Store
 .env.local
