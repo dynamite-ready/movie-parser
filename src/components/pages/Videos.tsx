@@ -32,7 +32,7 @@ export const Videos: React.FunctionComponent = () => {
   };
 
   if(!rootContext.isProcessed) {
-    const rootPath = process.cwd().replace("build", "");
+    const rootPath = process.cwd().replace("build", "")
     rootContext.setIsProcessed(true);
 
     const tmpDirPath = `${rootPath}public/tmp/`;
@@ -41,7 +41,7 @@ export const Videos: React.FunctionComponent = () => {
       const tmpImageDirPath = `${tmpDirPath}${rootContext.videoFiles[sceneIndex]}-images/`;
       
       if(!fs.existsSync(tmpImageDirPath)) {
-        childProcess.exec(`${rootPath}public/dist/process-video.exe --images file ${tmpDirPath}${rootContext.videoFiles[sceneIndex]} --ifolder ${tmpImageDirPath}`, (err: any, filelist: any) => {
+        childProcess.exec(`"${rootPath}public/dist/process-video.exe" "${tmpDirPath}${rootContext.videoFiles[sceneIndex]}" --ifolder "${tmpImageDirPath}" --images`, (err: any, filelist: any) => {
           const fileList = JSON.parse(filelist);
 
           function checkAllFilesExist(files: any) {
@@ -54,11 +54,9 @@ export const Videos: React.FunctionComponent = () => {
 
           checkAllFilesExist(fileList);
 
-          childProcess.exec(`${rootPath}public/dist/evaluate-images/evaluate-images.exe ${tmpImageDirPath}`, (err: any, imageResponse: any) => {
+          childProcess.exec(`"${rootPath}public/dist/evaluate-images/evaluate-images.exe" "${tmpImageDirPath}" --model "${rootPath}public/dist/ResNet50_nsfw_model.pth"`, (err: any, imageResponse: any) => {
             rimraf.sync(tmpImageDirPath);
 
-            console.log("Soooooo.... ", imageResponse, err);
-            
             const metadata = updatedMeta ? updatedMeta : rootContext.sceneMetadata;
             const spliced = [
               ...metadata.slice(0, sceneIndex),
