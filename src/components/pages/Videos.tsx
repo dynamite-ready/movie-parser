@@ -61,8 +61,10 @@ export const Videos: React.FunctionComponent = () => {
             const spliced = [
               ...metadata.slice(0, sceneIndex),
               [...metadata[sceneIndex], Boolean(JSON.parse(imageResponse) > -0.5)],
-              ...metadata.slice(sceneIndex)
+              ...metadata.slice(sceneIndex + 1)
             ];
+
+            console.log(spliced, sceneIndex)
 
             rootContext.setSceneMetadata(spliced);
 
@@ -89,11 +91,11 @@ export const Videos: React.FunctionComponent = () => {
                   ...textPanelStyle, 
                   background: 
                     rootContext.sceneMetadata[index][2] === null || 
-                    rootContext.sceneMetadata[index][2] === undefined ? "#444444" : 
+                    rootContext.sceneMetadata[index][2] === undefined ? "#6c625b" : 
                     rootContext.sceneMetadata[index][2] !== undefined && rootContext.sceneMetadata[index][2] === true ? 
                     "#FF0000" : "#007100" 
                 }}>
-                  <span style={textStyle}>from: {rootContext.sceneMetadata[index][0]}, to: {rootContext.sceneMetadata[index][1]}</span>
+                  <span style={textStyle}>From: {rootContext.sceneMetadata[index][0]}, To: {rootContext.sceneMetadata[index][1]}</span>
                 </div>     
               </div>
             )

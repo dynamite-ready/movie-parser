@@ -142,6 +142,7 @@ export const Header: React.FunctionComponent = (props: any) => {
       </div>
       <CommandBar
         items={menuItems}
+        styles={{ root: { padding: "0px" } }}
         overflowButtonProps={{ ariaLabel: 'More commands' }}
         ariaLabel={'Use left and right arrow keys to navigate between commands'}
       />
