@@ -89,11 +89,12 @@ export const Videos: React.FunctionComponent = () => {
                 </video>
                 <div style={{ 
                   ...textPanelStyle, 
-                  background: 
+                  background: rootContext.sceneMetadata[index] ? (
                     rootContext.sceneMetadata[index][2] === null || 
-                    rootContext.sceneMetadata[index][2] === undefined ? "#6c625b" : 
+                    rootContext.sceneMetadata[index][2] === undefined ? "#625a55" : 
                     rootContext.sceneMetadata[index][2] !== undefined && rootContext.sceneMetadata[index][2] === true ? 
-                    "#FF0000" : "#007100" 
+                    "#ad3333" : "#318359" 
+                  ) : "#625a55"
                 }}>
                   <span style={textStyle}>From: {rootContext.sceneMetadata[index][0]}, To: {rootContext.sceneMetadata[index][1]}</span>
                 </div>     
