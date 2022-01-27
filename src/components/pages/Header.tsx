@@ -97,7 +97,7 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
         // Create a temp folder if one doesn't yet exist.
         if(!fs.existsSync(tmpDirPath)) fs.mkdirSync(tmpDirPath);
         
-        // By default the vides are dumped into the `/build` folder.
+        // By default the vids are dumped into the `/build` folder.
         // Read it's contents.
         const tmpDir: string[] = fs.readdirSync(`${rootPath}build/`);
         

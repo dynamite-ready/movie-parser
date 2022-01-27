@@ -39,6 +39,12 @@ export const Videos: React.FunctionComponent = (_props) => {
     !rootContext.setVideoFiles
   ) { return <></>; }
 
+  // A bit of a cheeky hack this. I want to make sure that
+  // all every file in the list of images captured from a video file
+  // has been created. I am prepared to wait (hence `existsSync`).
+  // If any single item in the list has not yet been found to exist,
+  // then check the list again, until we're sure that every image frame has
+  // been generated.
   const checkAllFilesExist = (files: string[]) => {
     files.forEach((item: string) => {
       if (!fs.existsSync(item)) {
@@ -47,6 +53,8 @@ export const Videos: React.FunctionComponent = (_props) => {
     });
   };  
 
+  // After evaluating a video, update the metadata item to indicate is it's
+  // mucky or not.
   const updateMetadata = (
     metadata: SceneMetadataItem[] | undefined, 
     sceneIndex: number, 
@@ -61,11 +69,12 @@ export const Videos: React.FunctionComponent = (_props) => {
     )
   };
 
+  // The next two functions are just a cleanup. 
   const getProcessVideoCommand = (arg: string[]) => {
     return `"${arg[0]}public/dist/process-video.exe" "${arg[1]}${arg[2]}" --ifolder "${arg[3]}" --images`
   }
 
-  const getEvaluateVideoCommand = (arg: string[]) => {
+  const getEvaluateImagesCommand = (arg: string[]) => {
     return `"${arg[0]}public/dist/evaluate-images/evaluate-images.exe" "${arg[1]}" --model "${arg[0]}public/dist/ResNet50_nsfw_model.pth"`
   }
 
@@ -78,33 +87,50 @@ export const Videos: React.FunctionComponent = (_props) => {
     const evaluateScene = (sceneIndex: number, updatedMeta: SceneMetadataItem[] | null) => {
       if(!rootContext.videoFiles) return <></>;
 
+      // This temporary folder is the key to the whole program.
+      // For each individual video file split out from the upload, 
+      // I will capture a sample of images from it. Those sampled images are
+      // then store in this folder.
+      // Once they are all in place, we can then use the evaluate-images CLI program to
+      // check each individial image for NSFW content. 
       const tmpImageDirPath = `${tmpDirPath}${rootContext.videoFiles[sceneIndex]}-images/`;
 
       if (!fs.existsSync(tmpImageDirPath)) {
         childProcess.exec(getProcessVideoCommand([rootPath, tmpDirPath, rootContext.videoFiles[sceneIndex], tmpImageDirPath]), (_err: NodeJS.ErrnoException, filelist: string) => {
           try {
-            const fileList = JSON.parse(filelist);
-  
-            checkAllFilesExist(fileList);
-  
-            childProcess.exec(getEvaluateVideoCommand([rootPath, tmpImageDirPath]), (_err: NodeJS.ErrnoException, imageResponse: string) => {
+            const imageList = JSON.parse(filelist);
+            
+            // The way this is done is suboptimal.
+            // It mostly because the evaluate-images CLI program currently only
+            // works with folders of images.
+            checkAllFilesExist(imageList);
+            
+            // Now we're ready to check our temporary image folder for pr0ns. 
+            childProcess.exec(getEvaluateImagesCommand([rootPath, tmpImageDirPath]), (_err: NodeJS.ErrnoException, nsfwEstimate: string) => {
+              // Once the command is complete, we can delete the temp folder.
               rimraf.sync(tmpImageDirPath);
   
               if(!rootContext.setSceneMetadata || !rootContext.videoFiles) return <></>; 
-  
+              
               const metadata: SceneMetadataItem[] | undefined = updatedMeta ? updatedMeta : rootContext.sceneMetadata;
-              const updatedMetadata: SceneMetadataItem[] = updateMetadata(metadata, sceneIndex, imageResponse) as SceneMetadataItem[];
-  
+              // Update the metadata with opinion of if a given clip is NSFW.
+              const updatedMetadata: SceneMetadataItem[] = updateMetadata(metadata, sceneIndex, nsfwEstimate) as SceneMetadataItem[];
+              
+              // Store the updated metadata list.
               rootContext.setSceneMetadata(updatedMetadata);
   
-              if (sceneIndex < rootContext.videoFiles.length)
+              if (sceneIndex < rootContext.videoFiles.length) {
+                // While there are video scene clips to check for their NSFW status,
+                // recursively run the evaluate-images process on each successive video.
                 evaluateScene(sceneIndex + 1, updatedMetadata);
+              }
             });
           } catch(e) {}
         });
       }
     }
 
+    // Evaluate the first video.
     evaluateScene(0, null);
   }
 
@@ -121,11 +147,14 @@ export const Videos: React.FunctionComponent = (_props) => {
 
           return (
             <div key={index} style={videoElementWrapperStyle}>
+              {/* Display our video clips */}
               <video key={item} style={videoElementStyle} controls> 
                 <source src={`/tmp/${item}`} type="video/mp4"/>
               </video>
               <div style={{ 
-                ...textPanelStyle, 
+                ...textPanelStyle,
+                // Depending on the NSFW status of each clip,
+                // change the colour of the banner that displays the metadata.
                 background: (
                   isNSFW === null || 
                   isNSFW === undefined ? "#898989" : 
@@ -136,6 +165,7 @@ export const Videos: React.FunctionComponent = (_props) => {
                 {
                   (rootContext.sceneMetadata && rootContext.sceneMetadata[index]) && 
                   <span style={textStyle}>
+                    {/* This is where we display the metadata for each video */}
                     From: {rootContext.sceneMetadata[index][0]}, To: {rootContext.sceneMetadata[index][1]}
                   </span>
                 }
