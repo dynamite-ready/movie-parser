@@ -22,7 +22,7 @@ mergeStyles({
       margin: 0,
       padding: 0,
       height: '100vh',
-      background: "#ede4db"
+      background: "#333333"
     }
   }
 });

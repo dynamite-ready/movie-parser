@@ -8,16 +8,6 @@ const fs = require('fs');
 const process = require('process');
 const childProcess = require('child_process');
 
-// Why won't this work as a variable in typescript?
-// const loadingOverlayStyle = {
-//   position: "fixed",
-//   width: "100%",
-//   height: "100%",
-//   background: "white",
-//   zindex: 1,
-//   opacity: 0.6 
-// };
-
 export const Header: React.FunctionComponent = (props: any) => {
   const rootPath = process.cwd().replace("build", "");
   // This variable is probably the first context store property candidate.
@@ -44,13 +34,6 @@ export const Header: React.FunctionComponent = (props: any) => {
     rootContext.setLoading(true);
     rootContext.setSceneMetadata(null);
     props.history.push('/');
-
-    // Also, clear whatever came before.
-    // fs.readdirSync(tmpDirPath).forEach((element: any) => {
-    //   if(element.slice(0, 3) === "tmp") {
-    //     fs.unlinkSync(`${tmpDirPath}${element}`);
-    //   }
-    // });
 
     rimraf.sync(tmpDirPath);
 
@@ -95,21 +78,9 @@ export const Header: React.FunctionComponent = (props: any) => {
     {
       key: 'upload',
       name: 'Upload',
-      iconProps: {
-        iconName: 'Upload'
-      },
       onClick: openFileDialog,
       ['data-automation-id']: 'uploadButton'
     }
-    // {
-    //   key: 'download',
-    //   name: 'Download',
-    //   iconProps: {
-    //     iconName: 'Download'
-    //   },
-    //   onClick: () => console.log('Download'),
-    //   href: 'https://dev.office.com/fabric',
-    // }
   ];
     
   return (
@@ -124,7 +95,7 @@ export const Header: React.FunctionComponent = (props: any) => {
             position: "absolute",
             width: "100%",
             height: "100%",
-            zIndex: 1
+            zIndex: 1001
           }}>
             <Spinner
               style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}
@@ -142,7 +113,15 @@ export const Header: React.FunctionComponent = (props: any) => {
       </div>
       <CommandBar
         items={menuItems}
-        styles={{ root: { padding: "0px" } }}
+        styles={{ 
+          root: {
+            position: "fixed",
+            width: "100%",
+            height: "50px",
+            padding: "0px",
+            zIndex: 1000
+          } 
+        }}
         overflowButtonProps={{ ariaLabel: 'More commands' }}
         ariaLabel={'Use left and right arrow keys to navigate between commands'}
       />
