@@ -1,23 +1,37 @@
 import React, { useRef, useContext } from 'react';
 import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
-import {RootContext} from '../../context/root';
+import { RootContext } from '../../context/root';
 import { Spinner, SpinnerSize, Overlay } from 'office-ui-fabric-react';
+import { RouteComponentProps } from 'react-router-dom';
+
+type HeaderProps = {
+  history: RouteComponentProps["history"];
+}
 
 const rimraf = require('rimraf');
 const fs = require('fs');
 const process = require('process');
 const childProcess = require('child_process');
 
-export const Header: React.FunctionComponent = (props: any) => {
-  const rootPath = process.cwd().replace("build", "");
-  // This variable is probably the first context store property candidate.
-  const tmpDirPath = `${rootPath}public/tmp/`;
-  const rootContext: any = useContext(RootContext);
+export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
+  const rootContext = useContext(RootContext);
   const $fileUpload = useRef<HTMLInputElement>(document.createElement("input"));
+
+  if(
+    !rootContext.setIsProcessed ||
+    !rootContext.setLoading ||
+    !rootContext.setSceneMetadata ||
+    !rootContext.setVideoFiles
+  ) { return <></>; }
+
+  const rootPath = process.cwd().replace("build", "");
+  const tmpDirPath = `${rootPath}public/tmp/`;
   
-  if(!fs.existsSync(tmpDirPath)) 
-    // rimraf.sync(tmpDirPath);
+  // Create an empty temporary folder in the `/public` directory
+  // if it doesn't yet exist.
+  if(!fs.existsSync(tmpDirPath)) {
     fs.mkdirSync(tmpDirPath);
+  }
 
   const openFileDialog = () => {
     if($fileUpload) {
@@ -25,55 +39,89 @@ export const Header: React.FunctionComponent = (props: any) => {
     }
   }
 
-  const updateFilename = () => {
-    rootContext.setIsProcessed(false);
+  const processVideo = () => {
+    if(
+      !rootContext.setIsProcessed ||
+      !rootContext.setLoading ||
+      !rootContext.setSceneMetadata
+    ) { return } // Must be a better way to handle these guards.
+
     // Only do stuff if the file has realy changed.
     if(!$fileUpload.current.value) return;
 
+    rootContext.setIsProcessed(false);
+
     // Good point at which to add a loader...
     rootContext.setLoading(true);
-    rootContext.setSceneMetadata(null);
-    props.history.push('/');
+    rootContext.setSceneMetadata([]);
+    history.push('/');
 
+    // Delete the temporary video folder. if left over from a 
+    // previous upload.
     rimraf.sync(tmpDirPath);
 
-    const command = childProcess.spawn(`"${rootPath}public/dist/process-video.exe"`, [`"${$fileUpload.current.value}"`], { shell: true });
+    // Call the `process-video` CLI. We will use NodeJS's 
+    // `childProcess.spawn` command and it's evented API to process
+    // the CLI response.
+    const processVideoCommand = childProcess.spawn(
+      `"${rootPath}public/dist/process-video.exe"`, 
+      [`"${$fileUpload.current.value}"`], 
+      { shell: true }
+    );
 
-    command.stdout.on("data", (data: any) => {
+    // This event handler runs whenever data comes back from the `process-video`
+    // CLI command. We deserialize the data, and then store the metadata for
+    // the videos the CLI program has generated. These videos are initially stored
+    // In a unnamed temporary folder. This is because the Python `SceneDetect`
+    // module, AFAIK, doesn't have a way to chose where the files go.
+    processVideoCommand.stdout.on("data", (data: BinaryData) => {
       try {
+        if(!rootContext.setSceneMetadata) { return }
+
         const outputString = data.toString();
         const metadata = JSON.parse(outputString);
-        rootContext.setSceneMetadata(metadata);
+        rootContext.setSceneMetadata(metadata); // This is when the data is stored.
       } catch (error) {
         // We're merely swallowing these errors for now.
-        console.log("On Data Error: ", error);
+        // This is a hack...
       }
     });
 
-    command.on("close", (code: any) => {
+    // When the process-video CLI program has finished, first want to move the
+    // generated videos into a named folder, and then store a path to each video
+    // for further processing later on.
+    processVideoCommand.on("close", (_code: number) => {
       try {
-        // Move all the files.
-        if(!fs.existsSync(tmpDirPath))
-          fs.mkdirSync(tmpDirPath);
+        if(!rootContext.setLoading || !rootContext.setVideoFiles) return;
         
-        const tmpDir = fs.readdirSync(`${rootPath}build/`);
-  
-        tmpDir.forEach((element: any) => {
+        // Create a temp folder if one doesn't yet exist.
+        if(!fs.existsSync(tmpDirPath)) fs.mkdirSync(tmpDirPath);
+        
+        // By default the vides are dumped into the `/build` folder.
+        // Read it's contents.
+        const tmpDir: string[] = fs.readdirSync(`${rootPath}build/`);
+        
+        tmpDir.forEach((element: string) => {
+          // If an item inside the build folder has a filename beginning
+          // with 'tmp', we move the file to the `/public` folder.
           if(element.slice(0,3) === "tmp") {
             fs.renameSync(`${rootPath}build/${element}`, `${tmpDirPath}${element}-${new Date().getTime()}`);
           }
         });
-  
+        
+        // Store a list of all the videos that have been created.
         rootContext.setVideoFiles(fs.readdirSync(tmpDirPath));
-  
-        props.history.push('/videos');
+        
+        // Change page...
+        history.push('/videos');
+
+        // The task is done, we can remove the loading modal.
         rootContext.setLoading(false);
-      } catch(error)  {
-        console.log("On Close Error: ", error);
-      }
+      } catch(error) {}
     });
   }
 
+  // The euphoric joy of a frontend component library...
   const menuItems = [
     {
       key: 'upload',
@@ -107,7 +155,7 @@ export const Header: React.FunctionComponent = (props: any) => {
           ref={$fileUpload} 
           style={{display: "none"}} 
           type="file" 
-          onChange={updateFilename} 
+          onChange={processVideo} 
           accept="video/mp4"
         />
       </div>
@@ -122,8 +170,6 @@ export const Header: React.FunctionComponent = (props: any) => {
             zIndex: 1000
           } 
         }}
-        overflowButtonProps={{ ariaLabel: 'More commands' }}
-        ariaLabel={'Use left and right arrow keys to navigate between commands'}
       />
     </div>
   );

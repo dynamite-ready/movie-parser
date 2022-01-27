@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import RootContext from '../../context/root';
+import { SceneMetadataItem, VideoFileItem } from '../../context/types';
 
 const fs = require('fs');
 const childProcess = require('child_process');
@@ -28,49 +29,78 @@ const textStyle = {
   marginLeft: "10px"
 };
 
-export const Videos: React.FunctionComponent = () => {
-  const rootContext: any = useContext(RootContext);
+export const Videos: React.FunctionComponent = (_props) => {
+  const rootContext = useContext(RootContext);
+
+  if(
+    !rootContext.setIsProcessed ||
+    !rootContext.setLoading ||
+    !rootContext.setSceneMetadata ||
+    !rootContext.setVideoFiles
+  ) { return <></>; }
+
+  const checkAllFilesExist = (files: string[]) => {
+    files.forEach((item: string) => {
+      if (!fs.existsSync(item)) {
+        checkAllFilesExist(files);
+      }
+    });
+  };  
+
+  const updateMetadata = (
+    metadata: SceneMetadataItem[] | undefined, 
+    sceneIndex: number, 
+    imageResponse: string
+  ) => {
+    return (
+      metadata ? [
+        ...metadata.slice(0, sceneIndex),
+        [...metadata[sceneIndex], Boolean(JSON.parse(imageResponse) > -0.5)],
+        ...metadata.slice(sceneIndex + 1)
+      ] : []
+    )
+  };
+
+  const getProcessVideoCommand = (arg: string[]) => {
+    return `"${arg[0]}public/dist/process-video.exe" "${arg[1]}${arg[2]}" --ifolder "${arg[3]}" --images`
+  }
+
+  const getEvaluateVideoCommand = (arg: string[]) => {
+    return `"${arg[0]}public/dist/evaluate-images/evaluate-images.exe" "${arg[1]}" --model "${arg[0]}public/dist/ResNet50_nsfw_model.pth"`
+  }
 
   if (!rootContext.isProcessed) {
-    const rootPath = process.cwd().replace("build", "")
     rootContext.setIsProcessed(true);
-
+  
+    const rootPath = process.cwd().replace("build", "")
     const tmpDirPath = `${rootPath}public/tmp/`;
+  
+    const evaluateScene = (sceneIndex: number, updatedMeta: SceneMetadataItem[] | null) => {
+      if(!rootContext.videoFiles) return <></>;
 
-    const evaluateScene = (sceneIndex: number, updatedMeta: any) => {
       const tmpImageDirPath = `${tmpDirPath}${rootContext.videoFiles[sceneIndex]}-images/`;
 
       if (!fs.existsSync(tmpImageDirPath)) {
-        childProcess.exec(`"${rootPath}public/dist/process-video.exe" "${tmpDirPath}${rootContext.videoFiles[sceneIndex]}" --ifolder "${tmpImageDirPath}" --images`, (err: any, filelist: any) => {
-          const fileList = JSON.parse(filelist);
-
-          function checkAllFilesExist(files: any) {
-            files.forEach((item: any) => {
-              if (!fs.existsSync(item)) {
-                checkAllFilesExist(files);
-              }
+        childProcess.exec(getProcessVideoCommand([rootPath, tmpDirPath, rootContext.videoFiles[sceneIndex], tmpImageDirPath]), (_err: NodeJS.ErrnoException, filelist: string) => {
+          try {
+            const fileList = JSON.parse(filelist);
+  
+            checkAllFilesExist(fileList);
+  
+            childProcess.exec(getEvaluateVideoCommand([rootPath, tmpImageDirPath]), (_err: NodeJS.ErrnoException, imageResponse: string) => {
+              rimraf.sync(tmpImageDirPath);
+  
+              if(!rootContext.setSceneMetadata || !rootContext.videoFiles) return <></>; 
+  
+              const metadata: SceneMetadataItem[] | undefined = updatedMeta ? updatedMeta : rootContext.sceneMetadata;
+              const updatedMetadata: SceneMetadataItem[] = updateMetadata(metadata, sceneIndex, imageResponse) as SceneMetadataItem[];
+  
+              rootContext.setSceneMetadata(updatedMetadata);
+  
+              if (sceneIndex < rootContext.videoFiles.length)
+                evaluateScene(sceneIndex + 1, updatedMetadata);
             });
-          };
-
-          checkAllFilesExist(fileList);
-
-          childProcess.exec(`"${rootPath}public/dist/evaluate-images/evaluate-images.exe" "${tmpImageDirPath}" --model "${rootPath}public/dist/ResNet50_nsfw_model.pth"`, (err: any, imageResponse: any) => {
-            rimraf.sync(tmpImageDirPath);
-
-            const metadata = updatedMeta ? updatedMeta : rootContext.sceneMetadata;
-            const spliced = [
-              ...metadata.slice(0, sceneIndex),
-              [...metadata[sceneIndex], Boolean(JSON.parse(imageResponse) > -0.5)],
-              ...metadata.slice(sceneIndex + 1)
-            ];
-
-            console.log(spliced, sceneIndex)
-
-            rootContext.setSceneMetadata(spliced);
-
-            if (sceneIndex < rootContext.videoFiles.length)
-              evaluateScene(sceneIndex + 1, spliced);
-          });
+          } catch(e) {}
         });
       }
     }
@@ -79,9 +109,9 @@ export const Videos: React.FunctionComponent = () => {
   }
 
   return (
-    rootContext.sceneMetadata && <div style={{ position: "absolute", top: "50px" }}>
+    rootContext.sceneMetadata ? <div style={{ position: "absolute", top: "50px" }}>
       {
-        rootContext.videoFiles.length ? rootContext.videoFiles.map((item: any, index: number) => {
+        rootContext.videoFiles && rootContext.videoFiles.length ? rootContext.videoFiles.map((item: VideoFileItem, index: number) => {
           const isNSFW = (
             rootContext.sceneMetadata && 
             rootContext.sceneMetadata[index] && 
@@ -99,17 +129,22 @@ export const Videos: React.FunctionComponent = () => {
                 background: (
                   isNSFW === null || 
                   isNSFW === undefined ? "#898989" : 
-                  isNSFW !== undefined && isNSFW === true ? 
+                  isNSFW ? 
                   "#ad3333" : "#318359" 
                 )
               }}>
-              <span style={textStyle}>From: {rootContext.sceneMetadata[index][0]}, To: {rootContext.sceneMetadata[index][1]}</span>
+                {
+                  (rootContext.sceneMetadata && rootContext.sceneMetadata[index]) && 
+                  <span style={textStyle}>
+                    From: {rootContext.sceneMetadata[index][0]}, To: {rootContext.sceneMetadata[index][1]}
+                  </span>
+                }
               { isNSFW && <span style={{...textStyle, float: "right", display: "inline-block", marginRight: "10px"}}>NSFW!</span> }
             </div>     
           </div>
           )
         }) : []
       }
-    </div>
-  );
+    </div> : <></>
+  )
 };

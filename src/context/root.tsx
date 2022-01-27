@@ -1,35 +1,40 @@
 import React, { useState } from "react";
+import { ContextProviderProps, ContextState, SceneMetadataItem, VideoFileItem } from "./types";
 
-export const RootContext: any = React.createContext({videoFiles: null, setVideoFiles: null});
+export const RootContextObject: ContextState = {
+  isProcessed: false,
+  loading: false,
+  videoFiles: [], 
+  sceneMetadata: []
+};
 
-export const RootContextProvider: React.FunctionComponent = (props) => {
-    const [videoFiles, setVideoFiles] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [sceneMetadata, setSceneMetadata] = useState(null);
-    const [isProcessed, setIsProcessed] = useState(false);
-    
-    return (
-        <RootContext.Provider value={
-            {
-                isProcessed,
-                setIsProcessed,
+export const RootContext = React.createContext<ContextState>(RootContextObject);
 
-                // Get and set videoFiles...
-                videoFiles, 
-                setVideoFiles,
+export const RootContextProvider = ({ children }: ContextProviderProps) => {
+  const [videoFiles, setVideoFiles] = useState<VideoFileItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [sceneMetadata, setSceneMetadata] = useState<SceneMetadataItem[]>([]);
+  const [isProcessed, setIsProcessed] = useState(false);
+  
+  return (
+    <RootContext.Provider value={
+      {
+        // Getters
+        isProcessed,
+        loading, 
+        videoFiles, 
+        sceneMetadata,
 
-                // Get and set loading status...
-                loading, 
-                setLoading,
-                
-                // Get and set sceneMetadata...
-                sceneMetadata, 
-                setSceneMetadata                
-            }
-        }>
-            {props.children}
-        </RootContext.Provider>
-    );
+        // Setters
+        setIsProcessed,
+        setLoading,
+        setSceneMetadata,                
+        setVideoFiles
+      }
+    }>
+      {children}
+    </RootContext.Provider>
+  );
 };
 
 export default RootContext;
