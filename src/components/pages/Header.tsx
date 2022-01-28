@@ -1,71 +1,85 @@
-import React, { useRef, useContext } from 'react';
-import { CommandBar } from 'office-ui-fabric-react/lib/CommandBar';
-import { RootContext } from '../../context/root';
-import { Spinner, SpinnerSize, Overlay } from 'office-ui-fabric-react';
-import { RouteComponentProps } from 'react-router-dom';
+import React, { useRef, useContext, useState } from "react";
+import { CommandBar } from "office-ui-fabric-react/lib/CommandBar";
+import { RootContext } from "../../context/root";
+import {
+  Spinner,
+  SpinnerSize,
+  Overlay,
+  Image,
+  IImageProps,
+  AnimationStyles,
+  mergeStyles,
+} from "office-ui-fabric-react";
+import { RouteComponentProps } from "react-router-dom";
 
 type HeaderProps = {
   history: RouteComponentProps["history"];
-}
+};
 
-const rimraf = require('rimraf');
-const fs = require('fs');
-const process = require('process');
-const childProcess = require('child_process');
+const rimraf = require("rimraf");
+const fs = require("fs");
+const process = require("process");
+const childProcess = require("child_process");
 
 export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
   const rootContext = useContext(RootContext);
   const $fileUpload = useRef<HTMLInputElement>(document.createElement("input"));
+  const [fadeOut, setFadeOut] = useState(false);
 
-  if(
+  if (
     !rootContext.setIsProcessed ||
     !rootContext.setLoading ||
     !rootContext.setSceneMetadata ||
     !rootContext.setVideoFiles
-  ) { return <></>; }
+  ) {
+    return <></>;
+  }
 
   const rootPath = process.cwd().replace("build", "");
   const tmpDirPath = `${rootPath}public/tmp/`;
-  
+
   // Create an empty temporary folder in the `/public` directory
   // if it doesn't yet exist.
-  if(!fs.existsSync(tmpDirPath)) {
+  if (!fs.existsSync(tmpDirPath)) {
     fs.mkdirSync(tmpDirPath);
   }
 
   const openFileDialog = () => {
-    if($fileUpload) {
+    if ($fileUpload) {
       $fileUpload.current.click();
     }
-  }
+  };
 
   const processVideo = () => {
-    if(
+    if (
+      // Must be a better way to handle these guards.
       !rootContext.setIsProcessed ||
       !rootContext.setLoading ||
       !rootContext.setSceneMetadata
-    ) { return } // Must be a better way to handle these guards.
+    ) {
+      return;
+    }
 
     // Only do stuff if the file has realy changed.
-    if(!$fileUpload.current.value) return;
+    if (!$fileUpload.current.value) return;
 
     rootContext.setIsProcessed(false);
 
     // Good point at which to add a loader...
     rootContext.setLoading(true);
     rootContext.setSceneMetadata([]);
-    history.push('/');
+    history.push("/");
 
-    // Delete the temporary video folder. if left over from a 
+    // Delete the temporary video folder. if left over from a
     // previous upload.
     rimraf.sync(tmpDirPath);
 
-    // Call the `process-video` CLI. We will use NodeJS's 
+    // Call the `process-video` CLI. We will use NodeJS's
     // `childProcess.spawn` command and it's evented API to process
     // the CLI response.
     const processVideoCommand = childProcess.spawn(
-      `"${rootPath}public/dist/process-video.exe"`, 
-      [`"${$fileUpload.current.value}"`], 
+      `"${rootPath}public/dist/process-video.exe"`,
+      [`"${$fileUpload.current.value}"`],
       { shell: true }
     );
 
@@ -74,9 +88,11 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
     // the videos the CLI program has generated. These videos are initially stored
     // In a unnamed temporary folder. This is because the Python `SceneDetect`
     // module, AFAIK, doesn't have a way to chose where the files go.
-    processVideoCommand.stdout.on("data", (data: BinaryData) => {
+    processVideoCommand.stdout.on("data", (data: BinaryType[]) => {
       try {
-        if(!rootContext.setSceneMetadata) { return }
+        if (!rootContext.setSceneMetadata) {
+          return;
+        }
 
         const outputString = data.toString();
         const metadata = JSON.parse(outputString);
@@ -92,85 +108,119 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
     // for further processing later on.
     processVideoCommand.on("close", (_code: number) => {
       try {
-        if(!rootContext.setLoading || !rootContext.setVideoFiles) return;
-        
+        if (!rootContext.setLoading || !rootContext.setVideoFiles) return;
+
         // Create a temp folder if one doesn't yet exist.
-        if(!fs.existsSync(tmpDirPath)) fs.mkdirSync(tmpDirPath);
-        
+        if (!fs.existsSync(tmpDirPath)) fs.mkdirSync(tmpDirPath);
+
         // By default the vids are dumped into the `/build` folder.
         // Read it's contents.
         const tmpDir: string[] = fs.readdirSync(`${rootPath}build/`);
-        
+
         tmpDir.forEach((element: string) => {
           // If an item inside the build folder has a filename beginning
           // with 'tmp', we move the file to the `/public` folder.
-          if(element.slice(0,3) === "tmp") {
-            fs.renameSync(`${rootPath}build/${element}`, `${tmpDirPath}${element}-${new Date().getTime()}`);
+          if (element.slice(0, 3) === "tmp") {
+            fs.renameSync(
+              `${rootPath}build/${element}`,
+              `${tmpDirPath}${element}-${new Date().getTime()}`
+            );
           }
         });
-        
+
         // Store a list of all the videos that have been created.
         rootContext.setVideoFiles(fs.readdirSync(tmpDirPath));
-        
+
         // Change page...
-        history.push('/videos');
+        history.push("/videos");
 
         // The task is done, we can remove the loading modal.
         rootContext.setLoading(false);
-      } catch(error) {}
+      } catch (error) {}
     });
-  }
+  };
 
   // The euphoric joy of a frontend component library...
   const menuItems = [
     {
-      key: 'upload',
-      name: 'Upload',
+      key: "upload",
+      name: "Upload",
       onClick: openFileDialog,
-      ['data-automation-id']: 'uploadButton'
-    }
+      ["data-automation-id"]: "uploadButton",
+    },
   ];
-    
+
+  // A ropey splash image...
+  const imageProps: Partial<IImageProps> = {
+    src: "./nsfw-app-splash-screen.png",
+    styles: {
+      root: {
+        position: "absolute",
+        left: "50%",
+        top: "50%",
+        transform: "translate(-50%, -50%)",
+      },
+    },
+  };
+
+  // A styke to fade out the image.
+  const fadeOutElement = mergeStyles(AnimationStyles.fadeOut400);
+
+  // Apply the Fade out after a few seconds.
+  setTimeout(() => {
+    setFadeOut(true);
+  }, 5000);
+
   return (
     <div>
-      <div style={{
-        position: "absolute", 
-        width: "100%", 
-        height: "100%"
-      }}>
-        { rootContext.loading &&
-          <Overlay style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            zIndex: 1001
-          }}>
+      <div
+        style={{
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+        }}
+      >
+        {rootContext.loading && (
+          <Overlay
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              zIndex: 1001,
+            }}
+          >
             <Spinner
-              style={{position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)"}}
-              size={SpinnerSize.large} 
+              style={{
+                position: "fixed",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+              size={SpinnerSize.large}
             />
           </Overlay>
-        }
-        <input 
-          ref={$fileUpload} 
-          style={{display: "none"}} 
-          type="file" 
-          onChange={processVideo} 
+        )}
+        <input
+          ref={$fileUpload}
+          style={{ display: "none" }}
+          type="file"
+          onChange={processVideo}
           accept="video/mp4"
         />
       </div>
       <CommandBar
         items={menuItems}
-        styles={{ 
+        styles={{
           root: {
             position: "fixed",
             width: "100%",
             height: "50px",
             padding: "0px",
-            zIndex: 1000
-          } 
+            zIndex: 1000,
+          },
         }}
       />
+      <Image {...imageProps} className={fadeOut ? fadeOutElement : ""} />
     </div>
   );
 };

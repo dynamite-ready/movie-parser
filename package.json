@@ -1,5 +1,5 @@
 {
-  "name": "movie-parser",
+  "name": "nsfw-movie-parser",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,7 +9,6 @@
     "@types/react-dom": "16.8.4",
     "@uifabric/fluent-theme": "^0.16.7",
     "nw-react-scripts": "2.1.1",
-    "nw-splasher": "^1.0.0",
     "office-ui-fabric-react": "^6.174.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
