@@ -20,6 +20,7 @@ const rimraf = require("rimraf");
 const fs = require("fs");
 const process = require("process");
 const childProcess = require("child_process");
+const gui = require("nw.gui");
 
 export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
   const rootContext = useContext(RootContext);
@@ -146,7 +147,21 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
       key: "upload",
       name: "Upload",
       onClick: openFileDialog,
-      ["data-automation-id"]: "uploadButton",
+      ["data-automation-id"]: "upload-button"
+    }
+  ];
+  
+  const farMenuItems = [
+    {
+      key: "about",
+      name: "About",
+      iconOnly: true,
+      onClick: () => { gui.Shell.openExternal("http://localhost:3000/post/automating-video-curation-how-practical-is-ai") },
+      ["data-automation-id"]: "about-link",
+      style: { right: "20px" },
+      menuIconProps: {
+        iconName: 'Help'
+      }
     },
   ];
 
@@ -163,7 +178,7 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
     },
   };
 
-  // A styke to fade out the image.
+  // A style to fade out the image.
   const fadeOutElement = mergeStyles(AnimationStyles.fadeOut400);
 
   // Apply the Fade out after a few seconds.
@@ -210,6 +225,7 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
       </div>
       <CommandBar
         items={menuItems}
+        farItems={farMenuItems}
         styles={{
           root: {
             position: "fixed",

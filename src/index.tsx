@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { Header } from "./components/pages/Header";
 import { Videos } from "./components/pages/Videos";
 import { FluentCustomizations } from "@uifabric/fluent-theme";
-import { Customizer, mergeStyles } from "office-ui-fabric-react";
+import { Customizer, initializeIcons, mergeStyles } from "office-ui-fabric-react";
 import { HashRouter, Route } from "react-router-dom";
 
 import * as serviceWorker from "./serviceWorker";
@@ -15,6 +15,9 @@ const rimraf = require("rimraf");
 
 win.setMinimumSize(800, 450);
 win.showDevTools();
+
+// Ah... Fluent/Fabric UI... Never change...
+initializeIcons();
 
 win.on("close", () => {
   const rootPath = process.cwd().replace("build", "");
