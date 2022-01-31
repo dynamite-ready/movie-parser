@@ -20,8 +20,8 @@ win.showDevTools();
 initializeIcons();
 
 win.on("close", () => {
-  const rootPath = process.cwd().replace("build", "");
-  const tmpDirPath = `${rootPath}public/tmp/`;
+  const rootPath = `${process.cwd()}/`;
+  const tmpDirPath = `${rootPath}temp/`;
 
   win.hide();
   // Delete temp image folder when closing the application.

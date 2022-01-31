@@ -42,16 +42,13 @@
   "main": "index.html",
   "nwBuilder": {
     "//": "https://github.com/nwjs-community/nw-builder",
-    "platforms": [
-      "osx64",
-      "win32",
-      "win64"
-    ],
+    "platforms": [ "win64" ],
     "version": "latest",
     "flavor": "normal",
     "buildDir": "./build",
     "cacheDir": "./cache",
-    "macIcns": "./src/logo.icns"
+    "macIcns": "./src/logo.icns",
+    "zip": false
   },
   "devDependencies": {
     "@types/react-router": "^5.0.3",

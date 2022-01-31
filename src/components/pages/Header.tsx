@@ -36,8 +36,8 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
     return <></>;
   }
 
-  const rootPath = process.cwd().replace("build", "");
-  const tmpDirPath = `${rootPath}public/tmp/`;
+  const rootPath = `${process.cwd()}/`;
+  const tmpDirPath = `${rootPath}temp/`;
 
   // Create an empty temporary folder in the `/public` directory
   // if it doesn't yet exist.
@@ -79,7 +79,7 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
     // `childProcess.spawn` command and it's evented API to process
     // the CLI response.
     const processVideoCommand = childProcess.spawn(
-      `"${rootPath}public/dist/process-video.exe"`,
+      `${rootPath}bin/process-video.exe`,
       [`"${$fileUpload.current.value}"`],
       { shell: true }
     );
@@ -116,14 +116,14 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
 
         // By default the vids are dumped into the `/build` folder.
         // Read it's contents.
-        const tmpDir: string[] = fs.readdirSync(`${rootPath}build/`);
+        const tmpDir: string[] = fs.readdirSync(`${rootPath}`);
 
         tmpDir.forEach((element: string) => {
           // If an item inside the build folder has a filename beginning
           // with 'tmp', we move the file to the `/public` folder.
           if (element.slice(0, 3) === "tmp") {
             fs.renameSync(
-              `${rootPath}build/${element}`,
+              `${rootPath}${element}`,
               `${tmpDirPath}${element}-${new Date().getTime()}`
             );
           }

@@ -3,34 +3,35 @@
 A quick prototype for a desktop application which can be used to open a movie file, and flag the frames which an ML model determines to be NSFW.
 Still needs a lot of cleaning up...
 
-## Available Scripts
+## Notes
 
-In the project directory, you can run:
+### 1: Build the app...
 
-### `npm start`
+You will need run `npm run build` before all other commands, as the build command will 'spread' the contents of the `./public` 
+folder into the `./build` folder, before the app can find the content of `./bin`.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the app.
+### 2: Start the app...
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+You've already 'built' the app because of this weird architecture quirk that requires us to do so, but `npm run start` represents
+the fastest way to build the app, and the only way to run Dev Tools for debugging. If you do need to debug, you can add the following
+to any `.tsx` or `.ts` file in the src folder:
 
-### `npm test`
+```
+const win = gui.Window.get();
+win.showDevTools();
+```
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Manually installed dependencies
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be released!
-
-### CLI programs for data processing should go in the `public/dist` folder...
+CLI programs for data processing should go in the `public/bin` folder. Then you should run `npm run build`.
+Here's a list of the dependencies required:
 
 - evaluate-images.exe
 - process-video.exe
 - mkvmerge.exe
 - ResNet50_nsfw_model.pth
+
+### Other quirks...
+
+- When rebuilding the app to package it, always delete the build folder first...
+- On Windows especially, the `npm run build` command will flake out, if you don't run the command from a terminal with administrator privileges...

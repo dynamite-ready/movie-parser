@@ -31,6 +31,8 @@ const textStyle = {
 
 export const Videos: React.FunctionComponent = (_props) => {
   const rootContext = useContext(RootContext);
+  const rootPath = `${process.cwd()}/`;
+  const tmpDirPath = `${rootPath}temp/`;
 
   if (
     !rootContext.setIsProcessed ||
@@ -73,18 +75,15 @@ export const Videos: React.FunctionComponent = (_props) => {
 
   // The next two functions are just a cleanup.
   const getProcessVideoCommand = (arg: string[]) => {
-    return `"${arg[0]}public/dist/process-video.exe" "${arg[1]}${arg[2]}" --ifolder "${arg[3]}" --images`;
+    return `"${arg[0]}bin/process-video.exe" "${arg[1]}${arg[2]}" --ifolder "${arg[3]}" --images`;
   };
 
   const getEvaluateImagesCommand = (arg: string[]) => {
-    return `"${arg[0]}public/dist/evaluate-images/evaluate-images.exe" "${arg[1]}" --model "${arg[0]}public/dist/ResNet50_nsfw_model.pth"`;
+    return `"${arg[0]}bin/evaluate-images/evaluate-images.exe" "${arg[1]}" --model "${arg[0]}bin/ResNet50_nsfw_model.pth"`;
   };
 
   if (!rootContext.isProcessed) {
     rootContext.setIsProcessed(true);
-
-    const rootPath = process.cwd().replace("build", "");
-    const tmpDirPath = `${rootPath}public/tmp/`;
 
     const evaluateScene = (
       sceneIndex: number,
@@ -173,7 +172,7 @@ export const Videos: React.FunctionComponent = (_props) => {
               <div key={index} style={videoElementWrapperStyle}>
                 {/* Display our video clips */}
                 <video key={item} style={videoElementStyle} controls>
-                  <source src={`/tmp/${item}`} type="video/mp4" />
+                  <source src={`${tmpDirPath}${item}`} type="video/mp4" />
                 </video>
                 <div
                   style={{
