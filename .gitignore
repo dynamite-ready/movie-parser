@@ -14,10 +14,11 @@
 # production
 /build
 
-# tmp file folder
-/public/tmp
+# `temp` file folder
+/public/temp
+/public/dist
 
-/public/bin
+/deploy/output
 
 # misc
 .DS_Store

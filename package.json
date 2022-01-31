@@ -48,6 +48,7 @@
     "buildDir": "./build",
     "cacheDir": "./cache",
     "macIcns": "./src/logo.icns",
+    "winIco": "./src/icon.ico",
     "zip": false
   },
   "devDependencies": {

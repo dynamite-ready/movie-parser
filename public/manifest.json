@@ -11,5 +11,11 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "window": {
+    "fullscreen": false,
+    "icon": "./src/icon.ico",
+    "min_height": 800,
+    "min_width": 450
+  }
 }

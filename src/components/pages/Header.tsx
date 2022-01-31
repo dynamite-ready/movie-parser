@@ -79,7 +79,7 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
     // `childProcess.spawn` command and it's evented API to process
     // the CLI response.
     const processVideoCommand = childProcess.spawn(
-      `${rootPath}bin/process-video.exe`,
+      `${rootPath}dist/process-video.exe`,
       [`"${$fileUpload.current.value}"`],
       { shell: true }
     );

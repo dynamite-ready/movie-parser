@@ -76,11 +76,11 @@ export const Videos: React.FunctionComponent = (_props) => {
 
   // The next two functions are just a cleanup.
   const getProcessVideoCommand = (arg: string[]) => {
-    return `"${arg[0]}bin/process-video.exe" "${arg[1]}${arg[2]}" --ifolder "${arg[3]}" --images`;
+    return `"${arg[0]}dist/process-video.exe" "${arg[1]}${arg[2]}" --ipath "${arg[3]}" --images`;
   };
 
   const getEvaluateImagesCommand = (arg: string[]) => {
-    return `"${arg[0]}bin/evaluate-images/evaluate-images.exe" "${arg[1]}" --model "${arg[0]}bin/ResNet50_nsfw_model.pth"`;
+    return `"${arg[0]}dist/evaluate-images/evaluate-images.exe" "${arg[1]}" --model "${arg[0]}dist/ResNet50_nsfw_model.pth"`;
   };
 
   if (!rootContext.isProcessed) {
