@@ -158,7 +158,6 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
       iconOnly: true,
       onClick: () => { gui.Shell.openExternal("http://localhost:3000/post/automating-video-curation-how-practical-is-ai") },
       ["data-automation-id"]: "about-link",
-      style: { right: "20px" },
       menuIconProps: {
         iconName: 'Help'
       }
@@ -228,7 +227,7 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
         farItems={farMenuItems}
         styles={{
           root: {
-            position: "fixed",
+            position: "absolute",
             width: "100%",
             height: "50px",
             padding: "0px",

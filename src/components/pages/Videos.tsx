@@ -1,3 +1,4 @@
+import { ScrollablePane } from "office-ui-fabric-react";
 import React, { useContext } from "react";
 import RootContext from "../../context/root";
 import { SceneMetadataItem, VideoFileItem } from "../../context/types";
@@ -157,7 +158,7 @@ export const Videos: React.FunctionComponent = (_props) => {
   }
 
   return rootContext.sceneMetadata ? (
-    <div style={{ position: "absolute", top: "50px" }}>
+    <ScrollablePane style={{ position: "absolute", top: "50px" }}>
       {rootContext.videoFiles && rootContext.videoFiles.length
         ? rootContext.videoFiles.map((item: VideoFileItem, index: number) => {
             const isNSFW =
@@ -171,10 +172,11 @@ export const Videos: React.FunctionComponent = (_props) => {
             return (
               <div key={index} style={videoElementWrapperStyle}>
                 {/* Display our video clips */}
-                <video key={item} style={videoElementStyle} controls>
+                <video key={`${item}-video`} style={videoElementStyle} controls>
                   <source src={`${tmpDirPath}${item}`} type="video/mp4" />
                 </video>
                 <div
+                  key={`${item}-caption`}
                   style={{
                     ...textPanelStyle,
                     // Depending on the NSFW status of each clip,
@@ -212,7 +214,7 @@ export const Videos: React.FunctionComponent = (_props) => {
             );
           })
         : []}
-    </div>
+    </ScrollablePane>
   ) : (
     <></>
   );

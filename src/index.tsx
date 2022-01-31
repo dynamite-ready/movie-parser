@@ -14,7 +14,7 @@ const win = gui.Window.get();
 const rimraf = require("rimraf");
 
 win.setMinimumSize(800, 450);
-// win.showDevTools();
+win.showDevTools();
 
 // Ah... Fluent/Fabric UI... Never change...
 initializeIcons();
@@ -36,7 +36,7 @@ mergeStyles({
       margin: 0,
       padding: 0,
       height: "100vh",
-      background: "#333333",
+      background: "#2d2d2d",
     },
   },
 });
@@ -53,7 +53,4 @@ ReactDOM.render(
   document.getElementById("root")
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
