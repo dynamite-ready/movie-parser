@@ -14,7 +14,7 @@ const win = gui.Window.get();
 const rimraf = require("rimraf");
 
 win.setMinimumSize(800, 450);
-win.showDevTools();
+// win.showDevTools();
 
 // Ah... Fluent/Fabric UI... Never change...
 initializeIcons();
