@@ -61,8 +61,10 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
       return;
     }
 
+    const currentFile = $fileUpload.current.value;
+
     // Only do stuff if the file has realy changed.
-    if (!$fileUpload.current.value) return;
+    if (!currentFile) return;
 
     rootContext.setIsProcessed(false);
 
@@ -79,8 +81,8 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
     // `childProcess.spawn` command and it's evented API to process
     // the CLI response.
     const processVideoCommand = childProcess.spawn(
-      `${rootPath}dist/process-video.exe`,
-      [`"${$fileUpload.current.value}"`],
+      `"${rootPath}dist/process-video.exe"`,
+      [`"${currentFile}"`],
       { shell: true }
     );
 
