@@ -74,7 +74,7 @@ export const Videos: React.FunctionComponent = (_props) => {
       : [];
   };
 
-  // The next two functions are just a cleanup.
+  // The next two functions are just for convenience.
   const getProcessVideoCommand = (arg: string[]) => {
     return `"${arg[0]}dist/process-video.exe" "${arg[1]}${arg[2]}" --ipath "${arg[3]}" --images`;
   };

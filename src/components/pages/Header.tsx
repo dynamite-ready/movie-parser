@@ -77,6 +77,13 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
     // previous upload.
     rimraf.sync(tmpDirPath);
 
+    // Apply the Fade out after a few seconds.
+    if (!fadeOut) {
+      setTimeout(() => {
+        setFadeOut(true);
+      }, 5000);
+    }
+
     // Call the `process-video` CLI. We will use NodeJS's
     // `childProcess.spawn` command and it's evented API to process
     // the CLI response.
@@ -149,20 +156,24 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
       key: "upload",
       name: "Upload",
       onClick: openFileDialog,
-      ["data-automation-id"]: "upload-button"
-    }
+      ["data-automation-id"]: "upload-button",
+    },
   ];
-  
+
   const farMenuItems = [
     {
       key: "about",
       name: "About",
       iconOnly: true,
-      onClick: () => { gui.Shell.openExternal("http://localhost:3000/post/automating-video-curation-how-practical-is-ai") },
+      onClick: () => {
+        gui.Shell.openExternal(
+          "http://localhost:3000/post/automating-video-curation-how-practical-is-ai"
+        );
+      },
       ["data-automation-id"]: "about-link",
       menuIconProps: {
-        iconName: 'Help'
-      }
+        iconName: "Help",
+      },
     },
   ];
 
@@ -181,11 +192,6 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
 
   // A style to fade out the image.
   const fadeOutElement = mergeStyles(AnimationStyles.fadeOut400);
-
-  // Apply the Fade out after a few seconds.
-  setTimeout(() => {
-    setFadeOut(true);
-  }, 5000);
 
   return (
     <div>

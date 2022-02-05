@@ -14,6 +14,8 @@
 # production
 /build
 
+/deploy/**
+
 # `temp` file folder
 /public/temp
 /public/dist
