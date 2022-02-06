@@ -3,7 +3,7 @@
   "name": "NSFW Movie Parser",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "./src/icon.png",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     }
@@ -14,7 +14,7 @@
   "background_color": "#ffffff",
   "window": {
     "fullscreen": false,
-    "icon": "./src/icon.ico",
+    "icon": "./src/icon.png",
     "min_height": 800,
     "min_width": 450
   }

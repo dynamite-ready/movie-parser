@@ -1,12 +1,11 @@
 # The NSFW Movie Parser
 
-## Installation
+An app to read a movie file, and indicate which scenes are NSFW. :D
 
-### 1 Dependencies
+## 1: Dependencies
 
 These build instructions assume you are on Windows 10+. 
-Building for OSX or Linux isn't that much harder though, but if you need help, you can either
-raise an issue.
+Building for OSX or Linux isn't that much harder though, but if you need help, you can raise an issue.
 
 First of, you will need to install Node JS. You can find it here - https://nodejs.org/en/
 
@@ -19,18 +18,18 @@ found here - https://github.com/dynamite-ready/movie-parser-cli
 Instructions for building and running programs above, can be found in the repo, but you will also
 need the following files to make the NSFW Movie Parser work
 
-- mkvmerge.exe (found here - https://www.videohelp.com/software/MKVToolNix)
-- ResNet50_nsfw_model.pth (found here - https://github.com/emiliantolo/pytorch_nsfw_model)
+- `mkvmerge.exe` (found here - https://www.videohelp.com/software/MKVToolNix)
+-`ResNet50_nsfw_model.pth` (found here - https://github.com/emiliantolo/pytorch_nsfw_model)
 
-### 2: Install
+## 2: Installation
 
-Using the command lie, open a prompt in the project folder, and then:
+Using the command line, open a prompt in the project folder, and then:
 
 ```
 npm install
 ```
 
-### 3: Build
+## 3: Build
 
 You will need to build the app, before you can start the program, as the build command will 'spread' the contents of the `./public` 
 folder into the `./build` folder:
@@ -39,7 +38,7 @@ folder into the `./build` folder:
 npm run build
 ```
 
-### 4: Start
+## 4: Start
 
 To run the app in test mode, use the following command:
 
@@ -57,7 +56,7 @@ This will run the application in a desktop window locally, so you can test and d
 
 #### *The program is simple. After launching it, simply click the 'Upload' button (step 1). Once you've done that, use the file dialog to choose an \`.mp4\` file. After a short wait (step 2), the app will load and display a video for each scene detected in the video submitted. Then, step by step, the app will evaluate each scene, and highlight the banner under each vid to indicate it's NSFW status.*
 
-### Known bugs
+## Known bugs
 
 - When rebuilding the app to package it, always delete the `./build` folder first
 - On Windows especially, the `npm run build` command will flake out, if you don't run the command from a terminal with administrator privileges
