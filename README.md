@@ -1,6 +1,7 @@
 # The NSFW Movie Parser
 
 An app to read a movie file, and indicate which scenes are NSFW. :D
+You can find more information at - https://raskie.com/post/practical-ai-autodetecting-nsfw
 
 ## 1: Dependencies
 
