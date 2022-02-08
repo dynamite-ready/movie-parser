@@ -25,7 +25,7 @@ found here - https://github.com/dynamite-ready/movie-parser-cli
 - evaluate-images.exe
 - process-video.exe
 
-Instructions for building and running programs above, can be found in the repo, but you will also
+Instructions for building and running the programs above can be found in the repo, but you will also
 need the following files to make the NSFW Movie Parser work
 
 - `mkvmerge.exe` (found here - https://www.videohelp.com/software/MKVToolNix)
@@ -41,7 +41,7 @@ npm install
 
 ## 3: Build
 
-You will need to build the app, before you can start the program, as the build command will 'spread' the contents of the `./public` 
+You will need to build the app before you can start the program, as the build command will 'spread' the contents of the `./public` 
 folder into the `./build` folder:
 
 ```
