@@ -1,7 +1,15 @@
 # The NSFW Movie Parser
 
-An app to read a movie file, and indicate which scenes are NSFW. :D
-You can find more information at - https://raskie.com/post/practical-ai-autodetecting-nsfw
+An app to read a movie file, and indicate which scenes are NSFW. You can download the installer for [the Windows 10 version here](https://1drv.ms/u/s!AjqBQLCPd19igUS7zy_ENw7RN3G2).\
+You also can find more information at - https://raskie.com/post/practical-ai-autodetecting-nsfw
+
+## Using the app
+
+| [![Launch the app](https://i.imgur.com/k9xZiHuh.png)](https://i.imgur.com/k9xZiHu.png) | [![Upload a video file](https://i.imgur.com/SIhRieth.png)](https://i.imgur.com/SIhRiet.png) | [![Check the file for NSFW content!](https://i.imgur.com/L3C9CKmh.png)](https://i.imgur.com/L3C9CKm.png) |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 1: Launch                                                                              | 2: Upload                                                                                   | 3: Evaluate                                                                                              |
+
+#### *The program is simple. After launching it, simply click the 'Upload' button (step 1). Once you've done that, use the file dialog to choose an \`.mp4\` file. After a short wait (step 2), the app will load and display a video for each scene detected in the video submitted. Then, step by step, the app will evaluate each scene, and highlight the banner under each vid to indicate it's NSFW status.*
 
 ## 1: Dependencies
 
@@ -48,14 +56,6 @@ npm start
 ```
 
 This will run the application in a desktop window locally, so you can test and debug the code.
-
-## Using the app
-
-| [![Launch the app](https://i.imgur.com/k9xZiHuh.png)](https://i.imgur.com/k9xZiHu.png) | [![Upload a video file](https://i.imgur.com/SIhRieth.png)](https://i.imgur.com/SIhRiet.png) | [![Check the file for NSFW content!](https://i.imgur.com/L3C9CKmh.png)](https://i.imgur.com/L3C9CKm.png) |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| 1: Launch                                                                              | 2: Upload                                                                                   | 3: Evaluate                                                                                              |
-
-#### *The program is simple. After launching it, simply click the 'Upload' button (step 1). Once you've done that, use the file dialog to choose an \`.mp4\` file. After a short wait (step 2), the app will load and display a video for each scene detected in the video submitted. Then, step by step, the app will evaluate each scene, and highlight the banner under each vid to indicate it's NSFW status.*
 
 ## Known bugs
 
