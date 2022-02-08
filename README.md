@@ -29,7 +29,7 @@ Instructions for building and running programs above, can be found in the repo, 
 need the following files to make the NSFW Movie Parser work
 
 - `mkvmerge.exe` (found here - https://www.videohelp.com/software/MKVToolNix)
--`ResNet50_nsfw_model.pth` (found here - https://github.com/emiliantolo/pytorch_nsfw_model)
+- `ResNet50_nsfw_model.pth` (found here - https://github.com/emiliantolo/pytorch_nsfw_model)
 
 ## 2: Installation
 
