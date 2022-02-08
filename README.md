@@ -1,7 +1,6 @@
 # The NSFW Movie Parser
 
-An app to read a movie file, and indicate which scenes are NSFW. You can download the installer for [the Windows 10 version here](https://1drv.ms/u/s!AjqBQLCPd19igUS7zy_ENw7RN3G2).\
-You also can find more information at - https://raskie.com/post/practical-ai-autodetecting-nsfw
+An app to read a movie file, and indicate which scenes are NSFW. You can download the installer for [the Windows 10 version here](https://1drv.ms/u/s!AjqBQLCPd19igUS7zy_ENw7RN3G2).
 
 ## Using the app
 
@@ -10,6 +9,8 @@ You also can find more information at - https://raskie.com/post/practical-ai-aut
 | 1: Launch                                                                              | 2: Upload                                                                                   | 3: Evaluate                                                                                              |
 
 #### *The program is simple. After launching it, simply click the 'Upload' button (step 1). Once you've done that, use the file dialog to choose an \`.mp4\` file. After a short wait (step 2), the app will load and display a video for each scene detected in the video submitted. Then, step by step, the app will evaluate each scene, and highlight the banner under each vid to indicate it's NSFW status.*
+
+You can find more information at - https://raskie.com/post/practical-ai-autodetecting-nsfw
 
 ## 1: Dependencies
 
