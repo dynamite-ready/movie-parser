@@ -167,7 +167,7 @@ export const Header: React.FunctionComponent<HeaderProps> = ({ history }) => {
       iconOnly: true,
       onClick: () => {
         gui.Shell.openExternal(
-          "http://localhost:3000/post/automating-video-curation-how-practical-is-ai"
+          "https://raskie.com/post/practical-ai-autodetecting-nsfw"
         );
       },
       ["data-automation-id"]: "about-link",

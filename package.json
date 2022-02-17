@@ -42,8 +42,10 @@
   "main": "index.html",
   "nwBuilder": {
     "//": "https://github.com/nwjs-community/nw-builder",
-    "platforms": [ "win64" ],
-    "version": "latest",
+    "platforms": [
+      "win64"
+    ],
+    "version": "0.60.0",
     "flavor": "normal",
     "buildDir": "./build",
     "cacheDir": "./cache",
